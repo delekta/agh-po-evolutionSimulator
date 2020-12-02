@@ -49,47 +49,93 @@ public class Map implements IWorldMap {
         this.jungleStartPoint = new Vector2d(x, y);
     }
 
-    @Override
     public void run() {
 
+        ArrayList<ArrayList> animalsArray = returnArray(animalHashMap);
 
-        ListIterator<Animal> animalListIterator = animals.listIterator();
+        ListIterator<ArrayList> animalsArrayListIterator = animalsArray.listIterator();
 
-        for (MoveDirection direction : directions) {
-            if (!animalListIterator.hasNext()) {
-                animalListIterator = animals.listIterator();
-            }
-            Animal animal = animalListIterator.next();
+        while (animalsArrayListIterator.hasNext()) {
+            ArrayList<Animal> animalsAtPosition = animalsArrayListIterator.next();
+            ListIterator<Animal> animalListIterator = animalsAtPosition.listIterator();
+            while (animalListIterator.hasNext()) {
+                Animal animal = animalListIterator.next();
 
-//            debugger(animal, direction);
+                animal.changeEnergy(-this.moveEnergy);
+                if (animal.getEnergy() < 0) {
+                    removeFromHashMap(animalHashMap, animal.getPosition(), animal);
+                }
+                animal.changeOrientation();
+                //zmiane zawartosci w hashmapie
+                Vector2d oldPosition = animal.getPosition();
+                move(animal);
+                Vector2d newPosition = animal.getPosition();
 
-            switch (direction) {
-                // losowo ze losujesz orientacje i ruszasz
-                case FORWARD:
-                    if (animal.getPosition().add(animal.getOrientation().toUnitVector())) {
-
-                        Vector2d oldPosition = animal.getPosition();
-                        animal.setPosition(animal.getPosition().add(animal.getOrientation().toUnitVector()));
-                        Vector2d newPosition = animal.getPosition();
-
-                        animal.notifyPositionChanged(oldPosition, newPosition);
-
-                    }
-                    break;
-                case BACKWARD:
-                    if (animal.getPosition().subtract(animal.getOrientation().toUnitVector())) {
-
-                        Vector2d oldPosition = animal.getPosition();
-                        animal.setPosition(animal.getPosition().subtract(animal.getOrientation().toUnitVector()));
-                        Vector2d newPosition = animal.getPosition();
-
-                        animal.notifyPositionChanged(oldPosition, newPosition);
-
-                    }
-                    break;
+                // [] zastanow się czy dobrze rozumiesz Observer!!!
+                animal.notifyPositionChanged(oldPosition, newPosition);
             }
         }
+
+
+        ArrayList<ArrayList> animalsUpdatedArray = returnArray(animalHashMap);
+
+        animalsArrayListIterator = animalsUpdatedArray.listIterator();
+
+        while (animalsArrayListIterator.hasNext()) {
+            ArrayList<Animal> animalsAtPosition = animalsArrayListIterator.next();
+            if(animalsAtPosition.size() > 1){
+                ArrayList<Animal> twoStrongest = Animal.getTwoStrongest(animalsAtPosition);
+                Animal newAnimal = Animal.reproduce(twoStrongest.get(0), twoStrongest.get(1));
+                // Parents can reproduce when their enegy is too low, then i return null
+                if(newAnimal != null){
+                    placeNewAnimal(twoStrongest.get(0).getPosition(), newAnimal);
+                }
+            }
+
+
+        }
     }
+
+    public void move(Animal animal){
+        animal.setPosition(convertPositionToMap(animal.getPosition().add(animal.getOrientation().toUnitVector())));
+    }
+
+    private void placeNewAnimal(Vector2d parentPosition, Animal newAnimal){
+        if(!areAllAroundOccupied(parentPosition)){
+            do{
+                newAnimal.setPosition(parentPosition);
+                newAnimal.changeOrientation();
+                move(newAnimal);
+            }while(isOccupied(newAnimal.getPosition()));
+        }else{
+            newAnimal.setPosition(parentPosition);
+            newAnimal.changeOrientation();
+            move(newAnimal);
+        }
+        putToHashMap(animalHashMap, newAnimal.getPosition(), newAnimal);
+
+    }
+
+    public boolean areAllAroundOccupied(Vector2d position){
+        Animal testAnimal = new Animal(this);
+        for(int i = 0; i < 8; i++){
+            testAnimal.setPosition(position);
+            testAnimal.setOrientation(MapDirection.getDirectionFromValue(i));
+            move(testAnimal);
+            if(!isOccupied(testAnimal.getPosition())){
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
+    // converts position to map when we go outside it
+    private Vector2d convertPositionToMap(Vector2d position){
+        return new Vector2d(position.x % this.width, position.y % this.height);
+    }
+
 
     @Override
     public String toString() {
@@ -98,10 +144,9 @@ public class Map implements IWorldMap {
     }
 
     @Override
-    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
-        Animal animal = animalHashMap.get(oldPosition);
-        animalHashMap.remove(oldPosition);
-        animalHashMap.put(newPosition, animal);
+    public void positionChanged(Vector2d oldPosition, Vector2d newPosition, Animal animal) {
+        removeFromHashMap(animalHashMap, oldPosition, animal);
+        putToHashMap(animalHashMap, newPosition, animal);
     }
 
 
@@ -136,36 +181,14 @@ public class Map implements IWorldMap {
                 && jungleStartPoint.y < y && y <= jungleStartPoint.y + height;
     }
 
-
-    // tu powinno byc izi bo tu moga stac dwa na jednym
     @Override
     public boolean place(Animal animal) {
         if(!isOccupied(animal.getPosition())) {
-
-            animals.add(animal);
-
-            // added during lab6
-            animalHashMap.put(animal.getPosition(), animal);
+            putToHashMap(animalHashMap, animal.getPosition(), animal);
             return true;
         }
-        else{
-//            System.out.println("XD1");
-            Object object = objectAt(animal.getPosition());
-            // if grass takes the place, put the animal anyway
-            if(object instanceof Grass){
-
-                animals.add(animal);
-
-                // added during lab6
-                animalHashMap.put(animal.getPosition(), animal);
-                return true; // important, because we succeed in placing animal
-            }
-            else{
-                // added during lab 6
-                throw new IllegalArgumentException("x:" + animal.getPosition().x + " " + "y: " + animal.getPosition().y + " jest juz zajęte");
-//                return false;
-            }
-        }
+        return false;
+        // [] Narazie zakładam że nie możemy postawić ani na trawie ani na innym zwierzęciu
     }
 
 
@@ -177,16 +200,18 @@ public class Map implements IWorldMap {
 
     @Override
     public Object objectAt(Vector2d position) {
-        Animal animal = animalHashMap.get(position);
-        if(animal != null){
-            return animal;
+        ArrayList<Animal> animalArrayList = animalHashMap.get(position);
+        if(animalArrayList != null){
+            // [] Do zastanowienia czy np nie chcemy wypisywać tego z największą energią
+            return animalArrayList.get(0);
         }
         else{
+            // If there is no grass - returns null
             return grassHashMap.get(position);
         }
     }
 
-    // HashMap Of Arrays Service
+    // HashMap Of Arrays - Service
     public static void putToHashMap(LinkedHashMap hashMap, Vector2d position, Animal animal){
 
         ArrayList<Animal> list = (ArrayList<Animal>) hashMap.get(position);
@@ -197,7 +222,7 @@ public class Map implements IWorldMap {
         list.add(animal);
     }
 
-    public static void removeFromHashMap(LinkedHashMap hashMap, String position, Animal animal){
+    public static void removeFromHashMap(LinkedHashMap hashMap, Vector2d position, Animal animal){
         ArrayList<Animal> list = (ArrayList<Animal>) hashMap.get(position);
         if(list != null){
             list.remove(animal);

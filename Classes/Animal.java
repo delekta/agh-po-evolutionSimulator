@@ -25,20 +25,33 @@ public class Animal implements IMapElement {
     public Vector2d getPosition(){return position;}
 
     // Start Energy powinno byc przeniesione do Mapy???
-    private double energy = map.getStartEnergy();
+    private int startEnergy = map.getStartEnergy();
+
+    public int getStartEnergy() {
+        return startEnergy;
+    }
+
+    private double energy = this.getStartEnergy();
 
     public double getEnergy() {
         return energy;
     }
 
-    public void changeEnergy(int changeValue){
+    public void changeEnergy(double changeValue){
         this.energy += changeValue;
+    }
+    public void setEnergy(double energy){
+        this.energy = energy;
     }
 
 
     private int[] genes = setRandomGenes();
 
-    private void changeOrientation(){
+    public int[] getGenes() {
+        return genes;
+    }
+
+    public void changeOrientation(){
         Random random = new Random();
         int valueOfTurn = this.genes[random.nextInt(32)];
         int valueOfResult = (this.orientation.getValueOfDirection() + valueOfTurn) % 8;
@@ -84,8 +97,96 @@ public class Animal implements IMapElement {
         return genes;
     }
 
-    public Animal reproduce(){
+    public static ArrayList<Animal> getTwoStrongest(ArrayList<Animal> animals){
 
+        // I callout this funcyion only when this condition is true
+        if(animals.size() > 1){
+            Animal animal1 = animals.get(1);
+            Animal animal2 = animals.get(0);
+
+            // animal1 is bigger than animal2
+            if(animals.get(0).getEnergy() >= animals.get(1).getEnergy()){
+                animal1 = animals.get(0);
+                animal2 = animals.get(1);
+            }
+
+            for(int i = 2; i < animals.size(); i++){
+                if(animals.get(i).getEnergy() > animal1.getEnergy()){
+                    animal2 = animal1;
+                    animal1 = animals.get(i);
+                }else if(animals.get(i).getEnergy() > animal2.getEnergy()){
+                    animal2 = animals.get(i);
+                }
+            }
+            ArrayList res = new ArrayList<Animal>();
+            res.add(animal1);
+            res.add(animal2);
+            return res;
+        }
+        return null;
+    }
+
+    public static Animal reproduce(Animal parent1, Animal parent2){
+        if(parent1.getEnergy() >= 0.5 * parent1.getStartEnergy()
+           && parent2.getEnergy() >= 0.5 * parent2.getStartEnergy()){
+            parent1.changeEnergy(-0.5 * parent1.getEnergy());
+            parent2.changeEnergy(-0.5 * parent2.getEnergy());
+
+            int[] childGenes;
+            childGenes = parent1.getGenesFromParents(parent1, parent2);
+
+
+            Animal child = new Animal(parent1.map, parent1.getPosition(), childGenes);
+            // wiec dziecko dostaje taką energie, nie energie startową?
+            child.setEnergy(0.5 * parent1.getEnergy() + 0.5 * parent2.getEnergy());
+
+            return child;
+        }
+        return null;
+    }
+
+    private int[] getGenesFromParents(Animal parent1, Animal parent2){
+        int[] childGenes = new int[32];
+        Random random = new Random();
+        int firstBreakPoint;
+        int secondBreakPoint;
+        do{
+            firstBreakPoint = random.nextInt(32);
+            secondBreakPoint = random.nextInt(32);
+        }while(firstBreakPoint < secondBreakPoint);
+        for(int i = 0; i < 32; i++){
+            if(i < firstBreakPoint || i >= secondBreakPoint){
+                childGenes[i] = parent1.getGenes()[i];
+            }
+            else {
+                childGenes[i] = parent2.getGenes()[i];
+            }
+        }
+        Arrays.sort(childGenes);
+        // Checking if genes conatins all orientations
+        int currentVal = childGenes[0];
+        int expectedVal = 0;
+
+        int i = 0;
+        while(i < 32){
+            currentVal = childGenes[i];
+            if(currentVal == expectedVal){
+                expectedVal++;
+            }
+            else{
+                int idxToChange = random.nextInt(32);
+                childGenes[idxToChange] = expectedVal;
+                Arrays.sort(childGenes);
+                i = 0;
+                currentVal = childGenes[0];
+                expectedVal = 0;
+            }
+            i++;
+            while( i < 32 && childGenes[i] == currentVal){
+                i++;
+            }
+        }
+        return childGenes;
     }
 
     private void addObserver(IPositionChangeObserver observer){
@@ -98,7 +199,7 @@ public class Animal implements IMapElement {
 
     public void notifyPositionChanged(Vector2d oldPosition, Vector2d newPosition){
         for(IPositionChangeObserver o: observers){
-            o.positionChanged(oldPosition, newPosition);
+            o.positionChanged(oldPosition, newPosition, this);
         }
     }
 

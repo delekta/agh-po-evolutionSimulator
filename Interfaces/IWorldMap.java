@@ -21,7 +21,7 @@ public interface IWorldMap extends IPositionChangeObserver{
 //      Modified from orginal IWorldMap
 //    boolean canMoveTo(Vector2d position);
 
-    // added
+    // added to getStartEnergy from map that is passed as IWorldMap argument to Animal Constructor
     int getStartEnergy();
     /**
      * Place a animal on the map.
