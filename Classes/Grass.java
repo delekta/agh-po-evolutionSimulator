@@ -9,6 +9,10 @@ public class Grass implements IMapElement {
         this.energy = plantEnergy;
     }
 
+    public int getPlantEnergy() {
+        return energy;
+    }
+
     public Vector2d getPosition() {
         return position;
     }

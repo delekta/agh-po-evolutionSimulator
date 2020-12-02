@@ -97,6 +97,8 @@ public class Animal implements IMapElement {
         return genes;
     }
 
+    // Function returns to strongest animals at one position
+    // When there is one animal, it returns one animal, it is useful in eating
     public static ArrayList<Animal> getTwoStrongest(ArrayList<Animal> animals){
 
         // I callout this funcyion only when this condition is true
@@ -122,6 +124,8 @@ public class Animal implements IMapElement {
             res.add(animal1);
             res.add(animal2);
             return res;
+        }else if(animals.size() == 1){
+            return animals;
         }
         return null;
     }

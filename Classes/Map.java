@@ -83,17 +83,27 @@ public class Map implements IWorldMap {
 
         while (animalsArrayListIterator.hasNext()) {
             ArrayList<Animal> animalsAtPosition = animalsArrayListIterator.next();
-            if(animalsAtPosition.size() > 1){
-                ArrayList<Animal> twoStrongest = Animal.getTwoStrongest(animalsAtPosition);
+            ArrayList<Animal> twoStrongest = Animal.getTwoStrongest(animalsAtPosition);
+            // if animalsAtPosition is in animalsUpdatedArray it must have at least one animal
+            Vector2d position = animalsAtPosition.get(0).getPosition();
+
+            // eating
+            if (grassHashMap.containsKey(position) && animalsAtPosition.size() > 0) {
+                Animal strongestAnimal = twoStrongest.get(0);
+                strongestAnimal.changeEnergy(grassHashMap.get(position).getPlantEnergy());
+                grassHashMap.remove(position);
+            }
+            // reproduction
+            else if(animalsAtPosition.size() > 1){
                 Animal newAnimal = Animal.reproduce(twoStrongest.get(0), twoStrongest.get(1));
                 // Parents can reproduce when their enegy is too low, then i return null
                 if(newAnimal != null){
                     placeNewAnimal(twoStrongest.get(0).getPosition(), newAnimal);
                 }
             }
-
-
         }
+
+        placeNewGrasses();
     }
 
     public void move(Animal animal){
@@ -150,7 +160,7 @@ public class Map implements IWorldMap {
     }
 
 
-    private void placeGrasses(int number){
+    private void placeNewGrasses(){
         Random rand = new Random();
         int x;
         int y;
