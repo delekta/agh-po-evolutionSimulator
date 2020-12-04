@@ -60,7 +60,7 @@ public class Animal implements IMapElement {
 
     public String toString(){
         // to provide the same width of cell
-        String res = this.energy >= 0 ? String.valueOf((int)this.energy) + " " : String.valueOf((int)this.energy);
+        String res = (this.energy < 10 && this.energy >= 0) ? String.valueOf((int)this.energy) + " " : String.valueOf((int)this.energy);
         return res;
     }
 
@@ -141,6 +141,7 @@ public class Animal implements IMapElement {
     public static Animal reproduce(Animal parent1, Animal parent2){
         if(parent1.getEnergy() >= 0.5 * parent1.getStartEnergy()
            && parent2.getEnergy() >= 0.5 * parent2.getStartEnergy()){
+            // do testow
             parent1.changeEnergy(-0.5 * parent1.getEnergy());
             parent2.changeEnergy(-0.5 * parent2.getEnergy());
 

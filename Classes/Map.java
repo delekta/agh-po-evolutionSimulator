@@ -111,7 +111,7 @@ public class Map implements IWorldMap {
     }
 
     public void run2(int turns) {
-
+        int t = 0;
         while (turns > 0) {
             turns--;
 
@@ -162,6 +162,8 @@ public class Map implements IWorldMap {
             }
 
             placeNewGrasses();
+            t++;
+            System.out.println("Turn: " + t);
             System.out.println(this);
         }
     }
@@ -176,6 +178,7 @@ public class Map implements IWorldMap {
                 newAnimal.setPosition(parentPosition);
                 newAnimal.changeOrientation();
                 move(newAnimal);
+                System.out.println("ptak" + parentPosition.x + " " + parentPosition.y);
             } while (isOccupied(newAnimal.getPosition()));
         } else {
             newAnimal.setPosition(parentPosition);
@@ -227,12 +230,16 @@ public class Map implements IWorldMap {
         Random rand = new Random();
         int x;
         int y;
+        int i = 0;
         // place grass in jungle
         do {
             x = rand.nextInt(jungleWidth + 1);
             y = rand.nextInt(jungleHeight + 1);
-
-        } while (isOccupied(new Vector2d(x, y)));
+            x += jungleStartPoint.x;
+            y += jungleStartPoint.y;
+            //niweluje problem zapetlania gdy jungla jest pelna, mozna zrobic funkcje sprawdzajaca czy jungla pelna!
+            i++;
+        } while (isOccupied(new Vector2d(x, y)) && i < 10);
         Grass jungleGrass = new Grass(plantEnergy);
         grassHashMap.put(new Vector2d(x, y), jungleGrass);
 
