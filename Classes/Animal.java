@@ -25,16 +25,16 @@ public class Animal implements IMapElement {
     public Vector2d getPosition(){return position;}
 
     // Start Energy powinno byc przeniesione do Mapy???
-    private int startEnergy = map.getStartEnergy();
+    private int startEnergy;
 
     public int getStartEnergy() {
         return startEnergy;
     }
 
-    private double energy = this.getStartEnergy();
+    private double energy;
 
     public double getEnergy() {
-        return energy;
+        return this.energy;
     }
 
     public void changeEnergy(double changeValue){
@@ -59,23 +59,31 @@ public class Animal implements IMapElement {
     }
 
     public String toString(){
-        return String.valueOf(this.energy);
+        // to provide the same width of cell
+        String res = this.energy >= 0 ? String.valueOf((int)this.energy) + " " : String.valueOf((int)this.energy);
+        return res;
     }
 
     // Constructors
     public Animal(IWorldMap map){
         this.map = map;
+        this.startEnergy = map.getStartEnergy();
+        this.energy = this.getStartEnergy();
         addObserver(map);
     }
 
     public Animal(IWorldMap map, Vector2d initialPosition){
         this.map = map;
+        this.startEnergy = map.getStartEnergy();
+        this.energy = this.getStartEnergy();
         addObserver(map);
         this.setPosition(initialPosition);
     }
 
     public Animal(IWorldMap map, Vector2d initialPosition, int[] genes){
         this.map = map;
+        this.startEnergy = map.getStartEnergy();
+        this.energy = this.getStartEnergy();
         addObserver(map);
         this.setPosition(initialPosition);
         this.genes = genes;

@@ -18,7 +18,7 @@ public class Grass implements IMapElement {
     }
 
     public String toString(){
-        return "*";
+        return "* ";
     }
 
     public Grass(Vector2d position){
