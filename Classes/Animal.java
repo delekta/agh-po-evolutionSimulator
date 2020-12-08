@@ -141,9 +141,10 @@ public class Animal implements IMapElement {
     public static Animal reproduce(Animal parent1, Animal parent2){
         if(parent1.getEnergy() >= 0.5 * parent1.getStartEnergy()
            && parent2.getEnergy() >= 0.5 * parent2.getStartEnergy()){
-            // do testow
-            parent1.changeEnergy(-0.5 * parent1.getEnergy());
-            parent2.changeEnergy(-0.5 * parent2.getEnergy());
+            // rodzice tracą 1/4 energii?
+            double childEnergy = 0.25 * parent1.getEnergy() + 0.25 * parent2.getEnergy();
+            parent1.changeEnergy(-0.25 * parent1.getEnergy());
+            parent2.changeEnergy(-0.25 * parent2.getEnergy());
 
             int[] childGenes;
             childGenes = parent1.getGenesFromParents(parent1, parent2);
@@ -151,7 +152,7 @@ public class Animal implements IMapElement {
 
             Animal child = new Animal(parent1.map, parent1.getPosition(), childGenes);
             // wiec dziecko dostaje taką energie, nie energie startową?
-            child.setEnergy(0.5 * parent1.getEnergy() + 0.5 * parent2.getEnergy());
+            child.setEnergy(childEnergy);
 
             return child;
         }

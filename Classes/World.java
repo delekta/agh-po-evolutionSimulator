@@ -19,12 +19,6 @@ public class World {
         map.place(new Animal(map, new Vector2d(16, 6)));
         map.place(new Animal(map, new Vector2d(16, 7)));
 
-        int turns = 500;
         System.out.println(map.toString());
-        map.run2(turns);
-        // co nie dziala
-        // - zawijanie na druga strone [done]
-        // - usun gdy energy mniejsze niz 0
-        // problem bo placeGrasses sie zapetla
     }
 }

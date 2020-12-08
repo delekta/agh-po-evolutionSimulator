@@ -49,123 +49,88 @@ public class Map implements IWorldMap {
         this.jungleStartPoint = new Vector2d(x, y);
     }
 
-    public void run(int turns) {
+    public void moveAll(){
+        ArrayList<ArrayList<Animal>> animalsCopy = new ArrayList<>(animalHashMap.values());
 
-        while (turns > 0) {
-            turns--;
-            ArrayList<ArrayList<Animal>> animalsArray = returnArray(animalHashMap);
+        for (ArrayList<Animal> animaList : animalsCopy) {
+            ArrayList<Animal> animalListCopy = new ArrayList<>(animaList);
+            for (Animal animal : animalListCopy) {
+                animal.changeOrientation();
+                //zmiane zawartosci w hashmapie
+                Vector2d oldPosition = animal.getPosition();
+                move(animal);
+                Vector2d newPosition = animal.getPosition();
 
-            ListIterator<ArrayList<Animal>> animalsArrayListIterator = animalsArray.listIterator();
+                // [] zastanow się czy dobrze rozumiesz Observer!!!
+                animal.notifyPositionChanged(oldPosition, newPosition);
 
-            while (animalsArrayListIterator.hasNext()) {
-                ArrayList<Animal> animalsAtPosition = animalsArrayListIterator.next();
-                ListIterator<Animal> animalListIterator = animalsAtPosition.listIterator();
-                while (animalListIterator.hasNext()) {
-                    Animal animal = animalListIterator.next();
-
-                    animal.changeEnergy(-this.moveEnergy);
-                    if (animal.getEnergy() < 0) {
-//                        removeFromHashMap(animalHashMap, animal.getPosition(), animal);
-                    }
-                    animal.changeOrientation();
-                    //zmiane zawartosci w hashmapie
-                    Vector2d oldPosition = animal.getPosition();
-                    move(animal);
-                    Vector2d newPosition = animal.getPosition();
-
-                    // [] zastanow się czy dobrze rozumiesz Observer!!!
-                    animal.notifyPositionChanged(oldPosition, newPosition);
-                }
+                // moves takes energy!
+                animal.changeEnergy(-this.moveEnergy);
             }
-
-
-            ArrayList<ArrayList<Animal>> animalsUpdatedArray = returnArray(animalHashMap);
-
-            animalsArrayListIterator = animalsUpdatedArray.listIterator();
-
-            while (animalsArrayListIterator.hasNext()) {
-                ArrayList<Animal> animalsAtPosition = animalsArrayListIterator.next();
-                ArrayList<Animal> twoStrongest = Animal.getTwoStrongest(animalsAtPosition);
-                // if animalsAtPosition is in animalsUpdatedArray it must have at least one animal
-                Vector2d position = animalsAtPosition.get(0).getPosition();
-
-                // eating
-                if (grassHashMap.containsKey(position) && animalsAtPosition.size() > 0) {
-                    Animal strongestAnimal = twoStrongest.get(0);
-                    strongestAnimal.changeEnergy(grassHashMap.get(position).getPlantEnergy());
-                    grassHashMap.remove(position);
-                }
-                // reproduction
-                else if (animalsAtPosition.size() > 1) {
-                    Animal newAnimal = Animal.reproduce(twoStrongest.get(0), twoStrongest.get(1));
-                    // Parents can reproduce when their enegy is too low, then i return null
-                    if (newAnimal != null) {
-                        placeNewAnimal(twoStrongest.get(0).getPosition(), newAnimal);
-                    }
-                }
-            }
-
-            placeNewGrasses();
-            System.out.println(this);
         }
     }
 
-    public void run2(int turns) {
-        int t = 0;
-        while (turns > 0) {
-            turns--;
+    public void removeDeads(){
+        ArrayList<ArrayList<Animal>> animalsCopy = new ArrayList<>(animalHashMap.values());
 
-            ArrayList<ArrayList<Animal>> animalsCopy = new ArrayList<>(animalHashMap.values());
-
-            for (ArrayList<Animal> animaList : animalsCopy) {
-                ArrayList<Animal> animalListCopy = new ArrayList<>(animaList);
-                for (Animal animal : animalListCopy) {
-                    animal.changeEnergy(-this.moveEnergy);
-                    if (animal.getEnergy() < 0) {
-                        // ok ten animal jest z kopii
-                        removeFromHashMap(animalHashMap, animal.getPosition(), animal);
-                    }else{
-                        animal.changeOrientation();
-                        //zmiane zawartosci w hashmapie
-                        Vector2d oldPosition = animal.getPosition();
-                        move(animal);
-                        Vector2d newPosition = animal.getPosition();
-
-                        // [] zastanow się czy dobrze rozumiesz Observer!!!
-                        animal.notifyPositionChanged(oldPosition, newPosition);
-                    }
+        for (ArrayList<Animal> animaList : animalsCopy) {
+            ArrayList<Animal> animalListCopy = new ArrayList<>(animaList);
+            for (Animal animal : animalListCopy) {
+                if (animal.getEnergy() <= 0) {
+                    removeFromHashMap(animalHashMap, animal.getPosition(), animal);
                 }
             }
-
-            animalsCopy = new ArrayList<>(animalHashMap.values());
-            // tez pracuje na kopii bo takto for sie wkurwia
-
-            for (ArrayList<Animal> animalsAtPosition : animalsCopy) {
-                ArrayList<Animal> twoStrongest = Animal.getTwoStrongest(animalsAtPosition);
-                // if animalsAtPosition is in animalsUpdatedArray it must have at least one animal
-                Vector2d position = animalsAtPosition.get(0).getPosition();
-
-                // eating
-                if (grassHashMap.containsKey(position) && animalsAtPosition.size() > 0) {
-                    Animal strongestAnimal = twoStrongest.get(0);
-                    strongestAnimal.changeEnergy(grassHashMap.get(position).getPlantEnergy());
-                    grassHashMap.remove(position);
-                }
-                // reproduction
-                else if (animalsAtPosition.size() > 1) {
-                    Animal newAnimal = Animal.reproduce(twoStrongest.get(0), twoStrongest.get(1));
-                    // Parents can reproduce when their enegry is too low, then i return null
-                    if (newAnimal != null) {
-                        placeNewAnimal(twoStrongest.get(0).getPosition(), newAnimal);
-                    }
-                }
-            }
-
-            placeNewGrasses();
-            t++;
-            System.out.println("Turn: " + t);
-            System.out.println(this);
         }
+    }
+
+    public void eatGrasses(){
+        ArrayList<ArrayList<Animal>> animalsCopy = new ArrayList<>(animalHashMap.values());
+        // tez pracuje na kopii bo tak to for sie wkurwia
+
+        for (ArrayList<Animal> animalsAtPosition : animalsCopy) {
+            // getTwoStrongest returns two animal sorted by energy
+            ArrayList<Animal> twoStrongest = Animal.getTwoStrongest(animalsAtPosition);
+
+            // if animalsAtPosition is in animalsUpdatedArray it must have at least one animal
+            Vector2d position = animalsAtPosition.get(0).getPosition();
+
+            // eating
+            if (grassHashMap.containsKey(position) && animalsAtPosition.size() > 0) {
+                if (animalsAtPosition.size() > 1 && twoStrongest.get(0) == twoStrongest.get(1)) {
+                    twoStrongest.get(0).changeEnergy(grassHashMap.get(position).getPlantEnergy() * 0.5);
+                    twoStrongest.get(1).changeEnergy(grassHashMap.get(position).getPlantEnergy() * 0.5);
+                } else {
+                    twoStrongest.get(0).changeEnergy(grassHashMap.get(position).getPlantEnergy());
+                }
+                grassHashMap.remove(position);
+            }
+        }
+    }
+
+    public void reproduceAnimals(){
+        ArrayList<ArrayList<Animal>> animalsCopy = new ArrayList<>(animalHashMap.values());
+        // tez pracuje na kopii bo tak to for sie wkurwia
+
+        for (ArrayList<Animal> animalsAtPosition : animalsCopy) {
+            ArrayList<Animal> twoStrongest = Animal.getTwoStrongest(animalsAtPosition);
+
+            // reproduction
+            if (animalsAtPosition.size() > 1) {
+                Animal newAnimal = Animal.reproduce(twoStrongest.get(0), twoStrongest.get(1));
+                // Parents can't reproduce when their enegry is too low, then reproduce return null
+                if (newAnimal != null) {
+                    placeNewAnimal(twoStrongest.get(0).getPosition(), newAnimal);
+                }
+            }
+        }
+    }
+
+    public void nextDay() {
+        moveAll();
+        removeDeads();
+        eatGrasses();
+        reproduceAnimals();
+        placeNewGrasses();
     }
 
     public void move(Animal animal) {
@@ -178,7 +143,6 @@ public class Map implements IWorldMap {
                 newAnimal.setPosition(parentPosition);
                 newAnimal.changeOrientation();
                 move(newAnimal);
-                System.out.println("ptak" + parentPosition.x + " " + parentPosition.y);
             } while (isOccupied(newAnimal.getPosition()));
         } else {
             newAnimal.setPosition(parentPosition);
@@ -225,23 +189,33 @@ public class Map implements IWorldMap {
         putToHashMap(animalHashMap, newPosition, animal);
     }
 
+    public boolean jungleIsFull(){
+        for(int x = jungleStartPoint.x; x <= jungleStartPoint.x + jungleWidth; x++){
+            for(int y = jungleStartPoint.y; y <= jungleStartPoint.y + jungleHeight; y++){
+                if(!isOccupied(new Vector2d(x, y))){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 
     private void placeNewGrasses() {
         Random rand = new Random();
         int x;
         int y;
-        int i = 0;
         // place grass in jungle
-        do {
-            x = rand.nextInt(jungleWidth + 1);
-            y = rand.nextInt(jungleHeight + 1);
-            x += jungleStartPoint.x;
-            y += jungleStartPoint.y;
-            //niweluje problem zapetlania gdy jungla jest pelna, mozna zrobic funkcje sprawdzajaca czy jungla pelna!
-            i++;
-        } while (isOccupied(new Vector2d(x, y)) && i < 10);
-        Grass jungleGrass = new Grass(plantEnergy);
-        grassHashMap.put(new Vector2d(x, y), jungleGrass);
+        if(!jungleIsFull()) {
+            do {
+                x = rand.nextInt(jungleWidth + 1);
+                y = rand.nextInt(jungleHeight + 1);
+                x += jungleStartPoint.x;
+                y += jungleStartPoint.y;
+            } while (isOccupied(new Vector2d(x, y)));
+            Grass jungleGrass = new Grass(plantEnergy);
+            grassHashMap.put(new Vector2d(x, y), jungleGrass);
+        }
 
         // place grass in normal area
         do {
@@ -310,23 +284,5 @@ public class Map implements IWorldMap {
                 animalHashMap.remove(position);
             }
         }
-    }
-
-    public static void showHashMapFor(HashMap hashMap) {
-        ArrayList<ArrayList<Animal>> arrayOfArrays = returnArray(hashMap);
-
-        for (ArrayList list : arrayOfArrays) {
-            if (!list.isEmpty()) {
-                for (Object element : list) {
-                    System.out.print(element);
-                }
-                System.out.println(" ");
-            }
-
-        }
-    }
-
-    public static ArrayList<ArrayList<Animal>> returnArray(HashMap hashMap) {
-        return new ArrayList<>(hashMap.values());
     }
 }
