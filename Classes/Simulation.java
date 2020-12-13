@@ -5,13 +5,10 @@ import java.util.TimerTask;
 
 public class Simulation {
     public static void main(String[] args) {
-        int height = 12;
-        int width = 30;
-        int startEnergy = 99;
-        int moveEnergy = 1;
-        int plantEnergy = 100;
-        double jungleRatio = 0.1;
-        Map map = new Map(height, width, startEnergy, moveEnergy, plantEnergy, jungleRatio);
+
+        Map map = new Map(Constants.BOARD_HEIGHT, Constants.BOARD_WIDTH, Constants.START_ENERGY,
+                        Constants.MOVE_ENERGY, Constants.PLANT_ENERGY, Constants.JUNGLE_RATIO);
+
         map.place(new Animal(map, new Vector2d(15, 5)));
         map.place(new Animal(map, new Vector2d(15, 6)));
         map.place(new Animal(map, new Vector2d(15, 7)));
@@ -21,8 +18,6 @@ public class Simulation {
 //        map.place(new Animal(map, new Vector2d(16, 5)));
 //        map.place(new Animal(map, new Vector2d(16, 6)));
 //        map.place(new Animal(map, new Vector2d(16, 7)));
-
-        int turns = 200;
         System.out.println(map.toString());
         simulate(map);
     }

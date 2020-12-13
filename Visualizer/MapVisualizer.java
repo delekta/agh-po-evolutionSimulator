@@ -9,6 +9,7 @@ import Interfaces.IWorldMap;
  *
  * @author apohllo
  */
+// Used to demo version
 public class MapVisualizer {
     private static final String EMPTY_CELL = "  ";
     private static final String FRAME_SEGMENT = " -";
