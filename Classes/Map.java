@@ -39,6 +39,7 @@ public class Map implements IWorldMap {
         return this.startEnergy;
     }
 
+    //zmień
     private void setJungle() {
         this.jungleHeight = (int) (this.height * jungleRatio);
         this.jungleWidth = (int) (this.width * jungleRatio);
@@ -167,12 +168,14 @@ public class Map implements IWorldMap {
     }
 
 
+
+
     // converts position to map when we go outside it
     private Vector2d convertPositionToMap(Vector2d position) {
-        int x = position.x < 0 ? this.width : position.x;
-        int y = position.y < 0 ? this.height : position.y;
-        x = x % (this.width + 1);
-        y = y % (this.height + 1);
+        int x = position.x < 0 ? this.width - 1 : position.x;
+        int y = position.y < 0 ? this.height - 1 : position.y;
+        x = x % (this.width);
+        y = y % (this.height);
         return new Vector2d(x, y);
     }
 
@@ -190,8 +193,8 @@ public class Map implements IWorldMap {
     }
 
     public boolean jungleIsFull(){
-        for(int x = jungleStartPoint.x; x <= jungleStartPoint.x + jungleWidth; x++){
-            for(int y = jungleStartPoint.y; y <= jungleStartPoint.y + jungleHeight; y++){
+        for(int x = jungleStartPoint.x; x < jungleStartPoint.x + jungleWidth; x++){
+            for(int y = jungleStartPoint.y; y < jungleStartPoint.y + jungleHeight; y++){
                 if(!isOccupied(new Vector2d(x, y))){
                     return false;
                 }
@@ -208,8 +211,8 @@ public class Map implements IWorldMap {
         // place grass in jungle
         if(!jungleIsFull()) {
             do {
-                x = rand.nextInt(jungleWidth + 1);
-                y = rand.nextInt(jungleHeight + 1);
+                x = rand.nextInt(jungleWidth);
+                y = rand.nextInt(jungleHeight);
                 x += jungleStartPoint.x;
                 y += jungleStartPoint.y;
             } while (isOccupied(new Vector2d(x, y)));
@@ -230,9 +233,9 @@ public class Map implements IWorldMap {
     }
 
     // [] check if e.g. jungleStartPoint.x + width is included
-    private boolean isOnJungle(int x, int y) {
-        return jungleStartPoint.x < x && x <= jungleStartPoint.x + width
-                && jungleStartPoint.y < y && y <= jungleStartPoint.y + height;
+    public boolean isOnJungle(int x, int y) {
+        return jungleStartPoint.x <= x && x < jungleStartPoint.x + this.jungleWidth
+                && jungleStartPoint.y <= y && y < jungleStartPoint.y + this.jungleHeight;
     }
 
     @Override
@@ -261,6 +264,21 @@ public class Map implements IWorldMap {
         } else {
             // If there is no grass - returns null
             return grassHashMap.get(position);
+        }
+    }
+
+    public void placeNAnimalsOnMap(int n){
+        Random rand = new Random();
+        int x;
+        int y;
+        for(int i = 0; i < n; i++){
+            do {
+                x = rand.nextInt(width);
+                y = rand.nextInt(height);
+
+            } while (isOccupied(new Vector2d(x, y)));
+            Animal newAnimal = new Animal(this, new Vector2d(x, y));
+            this.place(newAnimal);
         }
     }
 

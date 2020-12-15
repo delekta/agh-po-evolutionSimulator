@@ -1,23 +1,17 @@
 package Classes;
 
+import Constants.Constants;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Simulation {
     public static void main(String[] args) {
 
-        Map map = new Map(Constants.BOARD_HEIGHT, Constants.BOARD_WIDTH, Constants.START_ENERGY,
+        Map map = new Map(Constants.NUMBER_OF_TILES_Y, Constants.NUMBER_OF_TILES_X, Constants.START_ENERGY,
                         Constants.MOVE_ENERGY, Constants.PLANT_ENERGY, Constants.JUNGLE_RATIO);
 
-        map.place(new Animal(map, new Vector2d(15, 5)));
-        map.place(new Animal(map, new Vector2d(15, 6)));
-        map.place(new Animal(map, new Vector2d(15, 7)));
-        map.place(new Animal(map, new Vector2d(14, 5)));
-//        map.place(new Animal(map, new Vector2d(14, 6)));
-//        map.place(new Animal(map, new Vector2d(14, 7)));
-//        map.place(new Animal(map, new Vector2d(16, 5)));
-//        map.place(new Animal(map, new Vector2d(16, 6)));
-//        map.place(new Animal(map, new Vector2d(16, 7)));
+        map.placeNAnimalsOnMap(Constants.NUMBER_OF_ANIMALS);
         System.out.println(map.toString());
         simulate(map);
     }
