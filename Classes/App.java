@@ -10,6 +10,7 @@ public class App {
      public static void main(String[] args){
         EventQueue.invokeLater( () -> {
             try {
+                Constants.getValueFromJSON();
                 new GameMainFrame();
             } catch (IOException e) {
                 e.printStackTrace();
