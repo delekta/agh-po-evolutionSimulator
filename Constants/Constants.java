@@ -9,13 +9,13 @@ public class Constants {
     public static final int BOARD_WIDTH = 700;
     public static final int BOARD_HEIGHT = 700;
 
-    public static final int NUMBER_OF_TILES_X = 10;
-    public static final int NUMBER_OF_TILES_Y = 10;
+    public static final int NUMBER_OF_TILES_X = 11;
+    public static final int NUMBER_OF_TILES_Y = 11;
 
 
 
     public static final int START_ENERGY = 50;
-    public static final int NUMBER_OF_ANIMALS = 6;
+    public static final int NUMBER_OF_ANIMALS = 3;
     public static final int MOVE_ENERGY = 1;
     public static final int PLANT_ENERGY = 10;
     public static final double JUNGLE_RATIO = 0.4;
@@ -26,7 +26,7 @@ public class Constants {
     public static final int FOURTH_RANK = 100;
 
     // Speed Of The Application
-    public static final int GAME_SPEED = 500;
+    public static final int GAME_SPEED = 200;
 
     static String snakesOnGrassPath = "/Users/kamildelekta/Documents/Programming/Obiektowka/EvolutionGenerator/src/Graphics/snakesOnGrass/";
     static String snakesOnJunglePath = "/Users/kamildelekta/Documents/Programming/Obiektowka/EvolutionGenerator/src/Graphics/snakesOnJungle/";

@@ -20,21 +20,32 @@ public class GamePanel extends JPanel {
     int xOverflow;
     int yOverflow;
 
-    BufferedImage image1 = ImageIO.read(new File(Constants.GOLD_SNAKE_GRASS_URL));
-    BufferedImage image2 = ImageIO.read(new File(Constants.WHITE_SNAKE_JUNGLE_URL));
-    BufferedImage image3 = ImageIO.read(new File(Constants.GRASS_TILE_URL));
-    BufferedImage image4 = ImageIO.read(new File(Constants.EGG_JUNGLE_URL));
+    BufferedImage WHITE_SNAKE_ON_JUNGLE = ImageIO.read(new File(Constants.WHITE_SNAKE_JUNGLE_URL));
+    BufferedImage BLUE_SNAKE_ON_JUNGLE = ImageIO.read(new File(Constants.BLUE_SNAKE_JUNGLE_URL));
+    BufferedImage RED_SNAKE_ON_JUNGLE = ImageIO.read(new File(Constants.RED_SNAKE_JUNGLE_URL));
+    BufferedImage GOLD_SNAKE_ON_JUNGLE = ImageIO.read(new File(Constants.GOLD_SNAKE_JUNGLE_URL));
+
+    BufferedImage WHITE_SNAKE_ON_GRASS = ImageIO.read(new File(Constants.WHITE_SNAKE_GRASS_URL));
+    BufferedImage BLUE_SNAKE_ON_GRASS = ImageIO.read(new File(Constants.BLUE_SNAKE_GRASS_URL));
+    BufferedImage RED_SNAKE_ON_GRASS = ImageIO.read(new File(Constants.RED_SNAKE_GRASS_URL));
+    BufferedImage GOLD_SNAKE_ON_GRASS = ImageIO.read(new File(Constants.GOLD_SNAKE_GRASS_URL));
+
+    BufferedImage GRASS_TILE = ImageIO.read(new File(Constants.GRASS_TILE_URL));
+    BufferedImage JUNGLE_TILE = ImageIO.read(new File(Constants.JUNGLE_TILE_URL));
+
+    BufferedImage EGG_GRASS = ImageIO.read(new File(Constants.EGG_GRASS_URL));
+    BufferedImage EGG_JUNGLE = ImageIO.read(new File(Constants.EGG_JUNGLE_URL));
 
     public GamePanel() throws IOException {
-        initializeLayout();
         initializeVariables();
+        initializeLayout();
 
 
     }
 
      private void initializeVariables() {
         // after every Constants.GAME_SPEED call GameLoop ActionPerformed
-         sizeOfTile = (int) (Math.min(Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT) / Math.max(Constants.NUMBER_OF_TILES_X, Constants.NUMBER_OF_TILES_Y));
+         sizeOfTile = (int) ((Math.min(Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT) / Math.max(Constants.NUMBER_OF_TILES_X, Constants.NUMBER_OF_TILES_Y)));
          xOverflow = Constants.BOARD_WIDTH - sizeOfTile * Constants.NUMBER_OF_TILES_X;
          yOverflow = Constants.BOARD_HEIGHT - sizeOfTile * Constants.NUMBER_OF_TILES_Y;
 
@@ -54,60 +65,56 @@ public class GamePanel extends JPanel {
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
         BufferedImage[][] tileGrid = new BufferedImage[Constants.NUMBER_OF_TILES_Y][Constants.NUMBER_OF_TILES_X];
-        try {
             for(int y = 0; y < Constants.NUMBER_OF_TILES_Y; y++){
                 for(int x = 0; x < Constants.NUMBER_OF_TILES_X; x++){
                     if(!map.isOnJungle(x, y)){
                         if(!map.isOccupied(new Vector2d(x, y))){
-                            tileGrid[y][x] = ImageIO.read(new File(Constants.GRASS_TILE_URL));
+                            tileGrid[y][x] = GRASS_TILE;
                         }
                         else if(map.objectAt(new Vector2d(x, y)) instanceof Grass){
-                            tileGrid[y][x] = ImageIO.read(new File(Constants.EGG_GRASS_URL));
+                            tileGrid[y][x] = EGG_GRASS;
                         }else{
                             Animal animal = (Animal) map.objectAt(new Vector2d(x, y));
                             if(animal.getEnergy() < Constants.FIRST_RANK){
-                                tileGrid[y][x] = ImageIO.read(new File(Constants.WHITE_SNAKE_GRASS_URL));
+                                tileGrid[y][x] = WHITE_SNAKE_ON_GRASS;
                             }
                             else if(animal.getEnergy() < Constants.SECOND_RANK){
-                                tileGrid[y][x] = ImageIO.read(new File(Constants.BLUE_SNAKE_GRASS_URL));
+                                tileGrid[y][x] = BLUE_SNAKE_ON_GRASS;
                             }
                             else if(animal.getEnergy() < Constants.THIRD_RANK){
-                                tileGrid[y][x] = ImageIO.read(new File(Constants.RED_SNAKE_GRASS_URL));
+                                tileGrid[y][x] = RED_SNAKE_ON_GRASS;
                             }
                             else{
-                                tileGrid[y][x] = ImageIO.read(new File(Constants.GOLD_SNAKE_GRASS_URL));
+                                tileGrid[y][x] = GOLD_SNAKE_ON_GRASS;
                             }
                         }
 
                     }
                     else{
                         if(!map.isOccupied(new Vector2d(x, y))){
-                            tileGrid[y][x] = ImageIO.read(new File(Constants.JUNGLE_TILE_URL));
+                            tileGrid[y][x] = JUNGLE_TILE;
                         }
                         else if(map.objectAt(new Vector2d(x, y)) instanceof Grass){
-                            tileGrid[y][x] = ImageIO.read(new File(Constants.EGG_JUNGLE_URL));
+                            tileGrid[y][x] = EGG_JUNGLE;
                         }
                         else{
                             Animal animal = (Animal) map.objectAt(new Vector2d(x, y));
                             if(animal.getEnergy() < Constants.FIRST_RANK){
-                                tileGrid[y][x] = ImageIO.read(new File(Constants.WHITE_SNAKE_JUNGLE_URL));
+                                tileGrid[y][x] = WHITE_SNAKE_ON_JUNGLE;
                             }
                             else if(animal.getEnergy() < Constants.SECOND_RANK){
-                                tileGrid[y][x] = ImageIO.read(new File(Constants.BLUE_SNAKE_JUNGLE_URL));
+                                tileGrid[y][x] = BLUE_SNAKE_ON_JUNGLE;
                             }
                             else if(animal.getEnergy() < Constants.THIRD_RANK){
-                                tileGrid[y][x] = ImageIO.read(new File(Constants.RED_SNAKE_JUNGLE_URL));
+                                tileGrid[y][x] = RED_SNAKE_ON_JUNGLE;
                             }
                             else{
-                                tileGrid[y][x] = ImageIO.read(new File(Constants.GOLD_SNAKE_JUNGLE_URL));
+                                tileGrid[y][x] = GOLD_SNAKE_ON_JUNGLE;
                             }
                         }
                     }
                 }
             }
-        }catch (IOException e) {
-            e.printStackTrace();
-        }
         for(int y = 0; y < Constants.NUMBER_OF_TILES_Y; y++){
             for(int x = 0; x < Constants.NUMBER_OF_TILES_X; x++) {
                 g.drawImage(tileGrid[y][x], x * sizeOfTile, y * sizeOfTile, sizeOfTile, sizeOfTile, null);
