@@ -11,7 +11,9 @@ public class App {
         EventQueue.invokeLater( () -> {
             try {
                 Constants.getValueFromJSON();
-                new GameMainFrame();
+                for(int i = 0; i < Constants.NUMBER_OF_MAPS; i++){
+                    new GameMainFrame();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
