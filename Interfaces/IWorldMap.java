@@ -23,6 +23,8 @@ public interface IWorldMap extends IPositionChangeObserver{
 
     // added to getStartEnergy from map that is passed as IWorldMap argument to Animal Constructor
     int getStartEnergy();
+
+    int getDay();
     /**
      * Place a animal on the map.
      *

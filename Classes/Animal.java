@@ -10,31 +10,42 @@ import java.util.List;
 import java.util.Random;
 
 public class Animal implements IMapElement {
-
-    // Added during lab7, IPositionChangeObserver???
     public List<IPositionChangeObserver> observers = new ArrayList<>();
-
     private IWorldMap map;
-
     private MapDirection orientation = MapDirection.NORTH;
     public void setOrientation(MapDirection o){ this.orientation = o;}
     public MapDirection getOrientation() { return orientation; }
-
     private Vector2d position = new Vector2d(2,2);
     public void setPosition(Vector2d v){ this.position = v;}
     public Vector2d getPosition(){return position;}
+    private int dayOfBirth;
+    private int numberOfChildren;
+    private ArrayList<Integer> dominantGenotypes;
+    private int[] genes;
 
     // Start Energy powinno byc przeniesione do Mapy???
-    private int startEnergy;
+    private final int startEnergy;
+
+    private double energy;
 
     public int getStartEnergy() {
         return startEnergy;
     }
 
-    private double energy;
+    public int getDayOfBirth() {
+        return dayOfBirth;
+    }
 
     public double getEnergy() {
         return this.energy;
+    }
+
+    public int getNumberOfChildren() {
+        return numberOfChildren;
+    }
+
+    public ArrayList<Integer> getDominantGenotypes() {
+        return dominantGenotypes;
     }
 
     public void changeEnergy(double changeValue){
@@ -43,9 +54,6 @@ public class Animal implements IMapElement {
     public void setEnergy(double energy){
         this.energy = energy;
     }
-
-
-    private int[] genes = setRandomGenes();
 
     public int[] getGenes() {
         return genes;
@@ -67,30 +75,40 @@ public class Animal implements IMapElement {
     // Constructors
     public Animal(IWorldMap map){
         this.map = map;
+        this.dayOfBirth = this.map.getDay();
+        this.numberOfChildren = 0;
         this.startEnergy = map.getStartEnergy();
         this.energy = this.getStartEnergy();
+        this.genes = getRandomGenes();
         addObserver(map);
+        setDominantGenotypes();
     }
 
     public Animal(IWorldMap map, Vector2d initialPosition){
         this.map = map;
+        this.dayOfBirth = this.map.getDay();
+        this.numberOfChildren = 0;
         this.startEnergy = map.getStartEnergy();
         this.energy = this.getStartEnergy();
+        this.genes = getRandomGenes();
         addObserver(map);
         this.setPosition(initialPosition);
+        setDominantGenotypes();
     }
 
     public Animal(IWorldMap map, Vector2d initialPosition, int[] genes){
         this.map = map;
+        this.dayOfBirth = this.map.getDay();
+        this.numberOfChildren = 0;
         this.startEnergy = map.getStartEnergy();
         this.energy = this.getStartEnergy();
         addObserver(map);
         this.setPosition(initialPosition);
         this.genes = genes;
-
+        setDominantGenotypes();
     }
 
-    private int[] setRandomGenes(){
+    private int[] getRandomGenes(){
         Random random = new Random();
         int [] genes = new int[32];
         for (int i = 0; i < 32; i++){
@@ -145,6 +163,8 @@ public class Animal implements IMapElement {
             double childEnergy = 0.25 * parent1.getEnergy() + 0.25 * parent2.getEnergy();
             parent1.changeEnergy(-0.25 * parent1.getEnergy());
             parent2.changeEnergy(-0.25 * parent2.getEnergy());
+            parent1.numberOfChildren++;
+            parent2.numberOfChildren++;
 
             int[] childGenes;
             childGenes = parent1.getGenesFromParents(parent1, parent2);
@@ -201,6 +221,26 @@ public class Animal implements IMapElement {
             }
         }
         return childGenes;
+    }
+
+    private void setDominantGenotypes(){
+        int[] numberOfGenes = new int[8];
+        for(int i = 0; i < 32; i++){
+            numberOfGenes[this.getGenes()[i]]++;
+        }
+        int max = 0;
+        for(int i = 0; i < 8; i++){
+            if(numberOfGenes[i] > max){
+                max = numberOfGenes[i];
+            }
+        }
+        ArrayList<Integer> dominantGenotypes = new ArrayList<>();
+        for(int i = 0; i < 8; i++){
+            if(numberOfGenes[i] == max){
+                dominantGenotypes.add(i);
+            }
+        }
+        this.dominantGenotypes = dominantGenotypes;
     }
 
     private void addObserver(IPositionChangeObserver observer){

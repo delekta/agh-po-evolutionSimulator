@@ -6,6 +6,7 @@ import Visualizer.MapVisualizer;
 import java.util.*;
 
 public class Map implements IWorldMap {
+    private int day;
     private int height;
     private int width;
     private int startEnergy;
@@ -14,32 +15,82 @@ public class Map implements IWorldMap {
     private Vector2d jungleStartPoint;
     private int jungleHeight;
     private int jungleWidth;
-
     //jungleRatio - length of appropriate jungle edge to length of appropriate map edge
     private double jungleRatio;
-
     // HashMap Of Arrays
     public HashMap<Vector2d, ArrayList<Animal>> animalHashMap = new HashMap<Vector2d, ArrayList<Animal>>();
-
     public HashMap<Vector2d, Grass> grassHashMap = new HashMap<>();
+    private int numberOfAnimals;
+    private int numberOfGrasses;
+    private double sumOfAnimalsEnergy;
+    private int sumOfDeathsAge;
+    private int numberOfDeaths;
+    private int sumOfChildren;
+    private int[] numberOfDominantGenotypes;
 
     public Map(int height, int width, int startEnergy, int moveEnergy, int plantEnergy, double jungleRatio) {
+        this.day = 0;
         this.height = height;
         this.width = width;
         this.startEnergy = startEnergy;
         this.moveEnergy = moveEnergy;
         this.plantEnergy = plantEnergy;
         this.jungleRatio = jungleRatio;
-
         setJungle();
-
     }
 
     public int getStartEnergy() {
         return this.startEnergy;
     }
 
-    //zmień
+    public int getNumberOfAnimals() {
+        return numberOfAnimals;
+    }
+
+    public int getNumberOfGrasses() {
+        return numberOfGrasses;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public void setSumOfAnimalsEnergy(double sumOfAnimalsEnergy) {
+        this.sumOfAnimalsEnergy = sumOfAnimalsEnergy;
+    }
+
+    public void setSumOfChildren(int sumOfChildren) {
+        this.sumOfChildren = sumOfChildren;
+    }
+
+    public void setNumberOfDominantGenotypes(int[] numberOfDominantGenotypes) {
+        this.numberOfDominantGenotypes = numberOfDominantGenotypes;
+    }
+
+    public double getAverageEnergy(){
+        return sumOfAnimalsEnergy / numberOfAnimals;
+    }
+
+    public double getAverageAgeOfDeaths(){
+        return (double) (sumOfDeathsAge / numberOfDeaths);
+    }
+
+    private double getAverageNumberOfChildren(){
+        return (double) (sumOfChildren / numberOfAnimals);
+    }
+
+    public int getDominantGenotype(){
+        int indexOfMax = -1;
+        int maxValue = 0;
+        for(int i = 0; i < this.numberOfDominantGenotypes.length; i++){
+            if(numberOfDominantGenotypes[i] > maxValue){
+                maxValue = numberOfDominantGenotypes[i];
+                indexOfMax = i;
+            }
+        }
+        return indexOfMax;
+    }
+
     private void setJungle() {
         this.jungleHeight = (int) (this.height * jungleRatio);
         this.jungleWidth = (int) (this.width * jungleRatio);
@@ -72,16 +123,30 @@ public class Map implements IWorldMap {
     }
 
     public void removeDeads(){
+        double _sumOfAnimalsEnergy = 0;
+        int _sumOfChildren = 0;
+        int[] _numberOfDominantGenotypes = new int[8];
         ArrayList<ArrayList<Animal>> animalsCopy = new ArrayList<>(animalHashMap.values());
-
         for (ArrayList<Animal> animaList : animalsCopy) {
             ArrayList<Animal> animalListCopy = new ArrayList<>(animaList);
             for (Animal animal : animalListCopy) {
                 if (animal.getEnergy() <= 0) {
-                    removeFromHashMap(animalHashMap, animal.getPosition(), animal);
+                    removeFromHashMap(animal.getPosition(), animal);
+                }
+                else{
+                    _sumOfAnimalsEnergy += animal.getEnergy();
+                    _sumOfChildren += animal.getNumberOfChildren();
+                    ArrayList<Integer> animalDominantGenotype = animal.getDominantGenotypes();
+                    for(int i = 0; i < animalDominantGenotype.size(); i++){
+                        _numberOfDominantGenotypes[animalDominantGenotype.get(i)]++;
+                    }
                 }
             }
         }
+        setSumOfAnimalsEnergy(_sumOfAnimalsEnergy);
+        setSumOfChildren(_sumOfChildren);
+        setNumberOfDominantGenotypes(_numberOfDominantGenotypes);
+
     }
 
     public void eatGrasses(){
@@ -103,6 +168,7 @@ public class Map implements IWorldMap {
                 } else {
                     twoStrongest.get(0).changeEnergy(grassHashMap.get(position).getPlantEnergy());
                 }
+                numberOfGrasses--;
                 grassHashMap.remove(position);
             }
         }
@@ -110,11 +176,8 @@ public class Map implements IWorldMap {
 
     public void reproduceAnimals(){
         ArrayList<ArrayList<Animal>> animalsCopy = new ArrayList<>(animalHashMap.values());
-        // tez pracuje na kopii bo tak to for sie wkurwia
-
         for (ArrayList<Animal> animalsAtPosition : animalsCopy) {
             ArrayList<Animal> twoStrongest = Animal.getTwoStrongest(animalsAtPosition);
-
             // reproduction
             if (animalsAtPosition.size() > 1) {
                 Animal newAnimal = Animal.reproduce(twoStrongest.get(0), twoStrongest.get(1));
@@ -127,9 +190,10 @@ public class Map implements IWorldMap {
     }
 
     public void nextDay() {
+        this.day++;
         moveAll();
-        removeDeads();
         eatGrasses();
+        removeDeads();
         reproduceAnimals();
         placeNewGrasses();
     }
@@ -150,7 +214,7 @@ public class Map implements IWorldMap {
             newAnimal.changeOrientation();
             move(newAnimal);
         }
-        putToHashMap(animalHashMap, newAnimal.getPosition(), newAnimal);
+        putToHashMap(newAnimal.getPosition(), newAnimal);
 
     }
 
@@ -166,9 +230,6 @@ public class Map implements IWorldMap {
         }
         return true;
     }
-
-
-
 
     // converts position to map when we go outside it
     private Vector2d convertPositionToMap(Vector2d position) {
@@ -188,8 +249,8 @@ public class Map implements IWorldMap {
 
     @Override
     public void positionChanged(Vector2d oldPosition, Vector2d newPosition, Animal animal) {
-        removeFromHashMap(animalHashMap, oldPosition, animal);
-        putToHashMap(animalHashMap, newPosition, animal);
+        removeFromHashMap(oldPosition, animal);
+        putToHashMap(newPosition, animal);
     }
 
     public boolean jungleIsFull(){
@@ -217,17 +278,17 @@ public class Map implements IWorldMap {
                 y += jungleStartPoint.y;
             } while (isOccupied(new Vector2d(x, y)));
             Grass jungleGrass = new Grass(plantEnergy);
+            numberOfGrasses++;
             grassHashMap.put(new Vector2d(x, y), jungleGrass);
         }
-
         // place grass in normal area
         do {
             x = rand.nextInt(width);
             y = rand.nextInt(height);
 
         } while (isOccupied(new Vector2d(x, y)) || isOnJungle(x, y));
-
         Grass normalGrass = new Grass(plantEnergy);
+        numberOfGrasses++;
         grassHashMap.put(new Vector2d(x, y), normalGrass);
 
     }
@@ -241,7 +302,7 @@ public class Map implements IWorldMap {
     @Override
     public boolean place(Animal animal) {
         if (!isOccupied(animal.getPosition())) {
-            putToHashMap(animalHashMap, animal.getPosition(), animal);
+            putToHashMap(animal.getPosition(), animal);
             return true;
         }
         return false;
@@ -283,17 +344,20 @@ public class Map implements IWorldMap {
     }
 
     // HashMap Of Arrays - Service
-    public static void putToHashMap(HashMap hashMap, Vector2d position, Animal animal) {
-
-        ArrayList<Animal> list = (ArrayList<Animal>) hashMap.get(position);
+    public void putToHashMap(Vector2d position, Animal animal) {
+        numberOfAnimals++;
+        ArrayList<Animal> list = animalHashMap.get(position);
         if (list == null) {
             list = new ArrayList<Animal>();
-            hashMap.put(position, list);
+            animalHashMap.put(position, list);
         }
         list.add(animal);
     }
 
-    public void removeFromHashMap(HashMap hashMap, Vector2d position, Animal animal) {
+    public void removeFromHashMap(Vector2d position, Animal animal) {
+        sumOfDeathsAge += this.day - animal.getDayOfBirth();
+        numberOfDeaths++;
+        numberOfAnimals--;
         ArrayList<Animal> list = animalHashMap.get(position);
         if (list != null) {
             list.remove(animal);
