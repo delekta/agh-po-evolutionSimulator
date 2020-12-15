@@ -4,18 +4,42 @@ import Classes.Map;
 import Constants.Constants;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 
 public class  GameMainFrame extends JFrame {
-
+    int sizeOfTile;
+    int xOverflow;
+    int yOverflow;
+    Timer timer;
+    StatisticsPanel statisticsPanel;
+    GamePanel gamePanel;
 
     public GameMainFrame() throws IOException {
+        initializeVariables();
         initializeLayout();
+
+    }
+
+    private void initializeVariables() throws IOException{
+        this.sizeOfTile = (int) ((Math.min(Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT) / Math.max(Constants.NUMBER_OF_TILES_X, Constants.NUMBER_OF_TILES_Y)));
+        this.xOverflow = Constants.BOARD_WIDTH - sizeOfTile * Constants.NUMBER_OF_TILES_X;
+        this.yOverflow = Constants.BOARD_HEIGHT - sizeOfTile * Constants.NUMBER_OF_TILES_Y;
+
+
+        this.gamePanel = new GamePanel(this.sizeOfTile, this.xOverflow, this.yOverflow);
+        this.timer = new Timer(Constants.GAME_SPEED, new GameLoop(gamePanel));
+        this.statisticsPanel = new StatisticsPanel(this.yOverflow, this.timer, this.gamePanel);
     }
 
     private void initializeLayout() throws IOException {
-        add(new GamePanel());
+
+
+        this.add(statisticsPanel, BorderLayout.LINE_START);
+        this.add(gamePanel, BorderLayout.LINE_END);
         setTitle(Constants.TITLE);
+        this.timer.start();
+
 
 
         pack();

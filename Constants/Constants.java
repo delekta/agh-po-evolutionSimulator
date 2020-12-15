@@ -9,13 +9,13 @@ public class Constants {
     public static final int BOARD_WIDTH = 700;
     public static final int BOARD_HEIGHT = 700;
 
-    public static final int NUMBER_OF_TILES_X = 11;
-    public static final int NUMBER_OF_TILES_Y = 11;
+    public static final int NUMBER_OF_TILES_X = 20;
+    public static final int NUMBER_OF_TILES_Y = 20;
 
 
 
     public static final int START_ENERGY = 50;
-    public static final int NUMBER_OF_ANIMALS = 3;
+    public static final int NUMBER_OF_ANIMALS = 10;
     public static final int MOVE_ENERGY = 1;
     public static final int PLANT_ENERGY = 10;
     public static final double JUNGLE_RATIO = 0.4;

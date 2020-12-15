@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class GamePanel extends JPanel {
-    private Timer timer;
     private Map map;
     int sizeOfTile;
     int xOverflow;
@@ -36,29 +35,22 @@ public class GamePanel extends JPanel {
     BufferedImage EGG_GRASS = ImageIO.read(new File(Constants.EGG_GRASS_URL));
     BufferedImage EGG_JUNGLE = ImageIO.read(new File(Constants.EGG_JUNGLE_URL));
 
-    public GamePanel() throws IOException {
+    public GamePanel(int sizeOfTile, int xOverflow, int yOverflow) throws IOException {
+        this.sizeOfTile = sizeOfTile;
+        this.xOverflow = xOverflow;
+        this.yOverflow = yOverflow;
         initializeVariables();
         initializeLayout();
-
-
     }
 
      private void initializeVariables() {
-        // after every Constants.GAME_SPEED call GameLoop ActionPerformed
-         sizeOfTile = (int) ((Math.min(Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT) / Math.max(Constants.NUMBER_OF_TILES_X, Constants.NUMBER_OF_TILES_Y)));
-         xOverflow = Constants.BOARD_WIDTH - sizeOfTile * Constants.NUMBER_OF_TILES_X;
-         yOverflow = Constants.BOARD_HEIGHT - sizeOfTile * Constants.NUMBER_OF_TILES_Y;
-
         this.map = new Map(Constants.NUMBER_OF_TILES_Y, Constants.NUMBER_OF_TILES_X, Constants.START_ENERGY,
                 Constants.MOVE_ENERGY, Constants.PLANT_ENERGY, Constants.JUNGLE_RATIO);
          this.map.placeNAnimalsOnMap(Constants.NUMBER_OF_ANIMALS);
-        this.timer = new Timer(Constants.GAME_SPEED, new GameLoop(this));
     }
 
     private void initializeLayout() {
         setPreferredSize(new Dimension(Constants.BOARD_WIDTH - xOverflow, Constants.BOARD_HEIGHT - yOverflow));
-        this.timer = new Timer(Constants.GAME_SPEED, new GameLoop(this));
-        this.timer.start();
     }
 
     @Override
