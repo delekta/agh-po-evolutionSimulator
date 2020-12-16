@@ -3,6 +3,7 @@ package Classes;
 import Interfaces.IWorldMap;
 import Visualizer.MapVisualizer;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class Map implements IWorldMap {
@@ -20,13 +21,15 @@ public class Map implements IWorldMap {
     // HashMap Of Arrays
     public HashMap<Vector2d, ArrayList<Animal>> animalHashMap = new HashMap<Vector2d, ArrayList<Animal>>();
     public HashMap<Vector2d, Grass> grassHashMap = new HashMap<>();
-    private int numberOfAnimals;
-    private int numberOfGrasses;
+    private double numberOfAnimals;
+    private double numberOfGrasses;
     private double sumOfAnimalsEnergy;
-    private int sumOfDeathsAge;
-    private int numberOfDeaths;
-    private int sumOfChildren;
+    private double sumOfDeathsAge;
+    private double numberOfDeaths;
+    private double sumOfChildren;
     private int[] numberOfDominantGenotypes;
+
+    private static DecimalFormat df = new DecimalFormat("0.00");
 
     public Map(int height, int width, int startEnergy, int moveEnergy, int plantEnergy, double jungleRatio) {
         this.day = 0;
@@ -44,11 +47,11 @@ public class Map implements IWorldMap {
     }
 
     public int getNumberOfAnimals() {
-        return numberOfAnimals;
+        return (int) numberOfAnimals;
     }
 
     public int getNumberOfGrasses() {
-        return numberOfGrasses;
+        return (int) numberOfGrasses;
     }
 
     public int getDay() {
@@ -68,27 +71,41 @@ public class Map implements IWorldMap {
     }
 
     public double getAverageEnergy(){
-        return sumOfAnimalsEnergy / numberOfAnimals;
+        return (double) Math.round((sumOfAnimalsEnergy / numberOfAnimals) * 100) / 100;
     }
 
     public double getAverageAgeOfDeaths(){
-        return (double) (sumOfDeathsAge / numberOfDeaths);
+        if(numberOfDeaths != 0){
+            return (double) Math.round((sumOfDeathsAge / numberOfDeaths)* 100) / 100;
+        }
+        else{
+            return 0;
+        }
+
     }
 
-    private double getAverageNumberOfChildren(){
-        return (double) (sumOfChildren / numberOfAnimals);
+    public double getAverageNumberOfChildren(){
+
+        return (double) Math.round((sumOfChildren / numberOfAnimals) * 100) / 100;
     }
 
     public int getDominantGenotype(){
         int indexOfMax = -1;
         int maxValue = 0;
-        for(int i = 0; i < this.numberOfDominantGenotypes.length; i++){
-            if(numberOfDominantGenotypes[i] > maxValue){
-                maxValue = numberOfDominantGenotypes[i];
-                indexOfMax = i;
+        //???
+        if(numberOfDominantGenotypes != null){
+            for(int i = 0; i < this.numberOfDominantGenotypes.length; i++){
+                if(numberOfDominantGenotypes[i] > maxValue){
+                    maxValue = numberOfDominantGenotypes[i];
+                    indexOfMax = i;
+                }
             }
+            return indexOfMax;
         }
-        return indexOfMax;
+        else{
+            return -1;
+        }
+
     }
 
     private void setJungle() {
@@ -131,6 +148,8 @@ public class Map implements IWorldMap {
             ArrayList<Animal> animalListCopy = new ArrayList<>(animaList);
             for (Animal animal : animalListCopy) {
                 if (animal.getEnergy() <= 0) {
+                    sumOfDeathsAge += this.day - animal.getDayOfBirth();
+                    numberOfDeaths++;
                     removeFromHashMap(animal.getPosition(), animal);
                 }
                 else{
@@ -355,8 +374,6 @@ public class Map implements IWorldMap {
     }
 
     public void removeFromHashMap(Vector2d position, Animal animal) {
-        sumOfDeathsAge += this.day - animal.getDayOfBirth();
-        numberOfDeaths++;
         numberOfAnimals--;
         ArrayList<Animal> list = animalHashMap.get(position);
         if (list != null) {

@@ -1,14 +1,17 @@
 package View;
 
+import Classes.Map;
 import Constants.Constants;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 import java.awt.event.ActionListener;
 import  java.awt.event.ActionEvent;
 
 public class StatisticsPanel extends JPanel {
+    private static Map map;
     Timer timer;
     int yOverflow;
     boolean isStarted;
@@ -24,8 +27,22 @@ public class StatisticsPanel extends JPanel {
 
     GamePanel gamePanel;
 
+    static JLabel dayInfo;
+    static JLabel numberOfAnimalsInfo;
+    static JLabel numberOfGrassesInfo;
+    static JLabel dominantGenotypesInfo;
+    static JLabel averageEnergyInfo;
+    static JLabel averageAgeOfDeathsInfo;
+    static JLabel averageNumberOfChildrenInfo;
 
-    public StatisticsPanel(int yOverflow, Timer timer, GamePanel gamePanel){
+
+
+    public StatisticsPanel(int yOverflow, Timer timer, GamePanel gamePanel, Map map){
+        initializeVariables(yOverflow, timer, gamePanel, map);
+        initializeLayout();
+    }
+
+    private void initializeVariables(int yOverflow, Timer timer, GamePanel gamePanel, Map map){
         this.yOverflow = yOverflow;
         this.timer = timer;
         this.isStarted = true;
@@ -34,18 +51,35 @@ public class StatisticsPanel extends JPanel {
         startActionListener = new StartActionListener();
         nextDayActionListener = new NextDayActionListener();
         this.gamePanel = gamePanel;
+        this.map = map;
 
-        initializeLayout();
-    }
-
-    private void initializeLayout() {
-        setPreferredSize(new Dimension(Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT - yOverflow));
         stopBtn = new JButton("STOP");
         startBtn = new JButton("START");
         nextDayBtn = new JButton("NEXT DAY");
 
+        dayInfo = new JLabel("  Day: " + map.getDay());
+        numberOfAnimalsInfo = new JLabel("  Number of animals: " + map.getNumberOfAnimals());
+        numberOfGrassesInfo = new JLabel("  Number of grasses: " + map.getNumberOfGrasses());
+        dominantGenotypesInfo = new JLabel("  Dominant genotype: " + map.getDominantGenotype());
+        averageEnergyInfo = new JLabel("  Average animal energy: " + map.getAverageEnergy());
+        averageAgeOfDeathsInfo = new JLabel("  Average age of deaths: " + map.getAverageAgeOfDeaths());
+        averageNumberOfChildrenInfo = new JLabel("  Average number of children: " + map.getAverageNumberOfChildren());
+    }
+
+    private void initializeLayout() {
+        setPreferredSize(new Dimension(Constants.BOARD_WIDTH / 2, Constants.BOARD_HEIGHT - yOverflow));
+        setLayout(new GridLayout(0,1));
+
         startBtn.setEnabled(isStopped);
         nextDayBtn.setEnabled(isStopped);
+
+        this.add(dayInfo);
+        this.add(numberOfAnimalsInfo);
+        this.add(numberOfGrassesInfo);
+        this.add(dominantGenotypesInfo);
+        this.add(averageEnergyInfo);
+        this.add(averageAgeOfDeathsInfo);
+        this.add(averageNumberOfChildrenInfo);
 
         this.add(stopBtn);
         this.add(startBtn);
@@ -54,8 +88,6 @@ public class StatisticsPanel extends JPanel {
         stopBtn.addActionListener(stopActionListener);
         startBtn.addActionListener(startActionListener);
         nextDayBtn.addActionListener(nextDayActionListener);
-
-        //Adding Action Listener Methods
     }
 
     private class StopActionListener implements ActionListener{
@@ -98,6 +130,16 @@ public class StatisticsPanel extends JPanel {
             }
 
         }
+    }
+
+    public static void updateStats(){
+        dayInfo.setText("  Day: " + map.getDay());
+        numberOfAnimalsInfo.setText("  Number of animals: " + map.getNumberOfAnimals());
+        numberOfGrassesInfo.setText("  Number of grasses: " + map.getNumberOfGrasses());
+        dominantGenotypesInfo.setText("  Dominant genotype: " + map.getDominantGenotype());
+        averageEnergyInfo.setText("  Average animal energy: " + map.getAverageEnergy());
+        averageAgeOfDeathsInfo.setText("  Average age of deaths: " + map.getAverageAgeOfDeaths());
+        averageNumberOfChildrenInfo.setText("  Average number of children: " + map.getAverageNumberOfChildren());
     }
 
 

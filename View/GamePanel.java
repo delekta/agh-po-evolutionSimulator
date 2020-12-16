@@ -35,18 +35,16 @@ public class GamePanel extends JPanel {
     BufferedImage EGG_GRASS = ImageIO.read(new File(Constants.EGG_GRASS_URL));
     BufferedImage EGG_JUNGLE = ImageIO.read(new File(Constants.EGG_JUNGLE_URL));
 
-    public GamePanel(int sizeOfTile, int xOverflow, int yOverflow) throws IOException {
-        this.sizeOfTile = sizeOfTile;
-        this.xOverflow = xOverflow;
-        this.yOverflow = yOverflow;
-        initializeVariables();
+    public GamePanel(int sizeOfTile, int xOverflow, int yOverflow, Map map) throws IOException {
+        initializeVariables(sizeOfTile, xOverflow, yOverflow, map);
         initializeLayout();
     }
 
-     private void initializeVariables() {
-        this.map = new Map(Constants.NUMBER_OF_TILES_Y, Constants.NUMBER_OF_TILES_X, Constants.START_ENERGY,
-                Constants.MOVE_ENERGY, Constants.PLANT_ENERGY, Constants.JUNGLE_RATIO);
-         this.map.placeNAnimalsOnMap(Constants.NUMBER_OF_ANIMALS);
+     private void initializeVariables(int sizeOfTile, int xOverflow, int yOverflow, Map map) {
+         this.sizeOfTile = sizeOfTile;
+         this.xOverflow = xOverflow;
+         this.yOverflow = yOverflow;
+        this.map = map;
     }
 
     private void initializeLayout() {
@@ -121,6 +119,8 @@ public class GamePanel extends JPanel {
 
     private void update() {
         map.nextDay();
+        // sprawdz czy gituwa
+        StatisticsPanel.updateStats();
     }
 
 

@@ -1,9 +1,9 @@
 {
-  "numberOfTilesX": 16,
-  "numberOfTilesY": 16,
+  "numberOfTilesX": 10,
+  "numberOfTilesY": 10,
   "numberOfMaps": 1,
   "startEnergy": 50,
-  "numberOfAnimals": 15,
+  "numberOfAnimals": 3,
   "moveEnergy": 1,
   "plantEnergy": 10,
   "jungleRatio": 0.4,
