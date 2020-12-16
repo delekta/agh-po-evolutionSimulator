@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 import  java.awt.event.ActionEvent;
 
 public class StatisticsPanel extends JPanel {
-    private static Map map;
+    private Map map;
     Timer timer;
     int yOverflow;
     boolean isStarted;
@@ -27,13 +27,13 @@ public class StatisticsPanel extends JPanel {
 
     GamePanel gamePanel;
 
-    static JLabel dayInfo;
-    static JLabel numberOfAnimalsInfo;
-    static JLabel numberOfGrassesInfo;
-    static JLabel dominantGenotypesInfo;
-    static JLabel averageEnergyInfo;
-    static JLabel averageAgeOfDeathsInfo;
-    static JLabel averageNumberOfChildrenInfo;
+    JLabel dayInfo;
+    JLabel numberOfAnimalsInfo;
+    JLabel numberOfGrassesInfo;
+    JLabel dominantGenotypesInfo;
+    JLabel averageEnergyInfo;
+    JLabel averageAgeOfDeathsInfo;
+    JLabel averageNumberOfChildrenInfo;
 
 
 
@@ -127,12 +127,13 @@ public class StatisticsPanel extends JPanel {
         public void actionPerformed(ActionEvent ae) {
             if(isStopped){
                 gamePanel.doOneLoop();
+                updateStats();
             }
 
         }
     }
 
-    public static void updateStats(){
+    public void updateStats(){
         dayInfo.setText("  Day: " + map.getDay());
         numberOfAnimalsInfo.setText("  Number of animals: " + map.getNumberOfAnimals());
         numberOfGrassesInfo.setText("  Number of grasses: " + map.getNumberOfGrasses());

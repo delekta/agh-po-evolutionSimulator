@@ -7,16 +7,15 @@ import java.awt.*;
 import java.io.IOException;
 
 public class App {
-     public static void main(String[] args){
-        EventQueue.invokeLater( () -> {
-            try {
-                Constants.getValueFromJSON();
-                for(int i = 0; i < Constants.NUMBER_OF_MAPS; i++){
-                    new GameMainFrame();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+     public static void main(String[] args) throws IOException {
+         Constants.getValueFromJSON();
+         for(int i = 0; i < Constants.NUMBER_OF_MAPS; i++) {
+                 try {
+                     GameMainFrame gameMainFrame = new GameMainFrame();
+                     gameMainFrame.startSimulation();
+                 } catch (IOException e) {
+                     e.printStackTrace();
+                 }
+         }
     }
 }

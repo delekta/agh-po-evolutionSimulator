@@ -13,6 +13,6 @@ public class GameLoop implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent arg0){
-        this.gamePanel.doOneLoop();
+//        this.doOneLoop();
     }
 }

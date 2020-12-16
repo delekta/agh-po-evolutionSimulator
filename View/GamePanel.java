@@ -119,8 +119,6 @@ public class GamePanel extends JPanel {
 
     private void update() {
         map.nextDay();
-        // sprawdz czy gituwa
-        StatisticsPanel.updateStats();
     }
 
 

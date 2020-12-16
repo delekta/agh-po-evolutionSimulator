@@ -5,9 +5,11 @@ import Constants.Constants;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 
-public class  GameMainFrame extends JFrame {
+public class  GameMainFrame extends JFrame implements ActionListener {
     int sizeOfTile;
     int xOverflow;
     int yOverflow;
@@ -30,7 +32,7 @@ public class  GameMainFrame extends JFrame {
         this.map.placeNAnimalsOnMap(Constants.NUMBER_OF_ANIMALS);
 
         this.gamePanel = new GamePanel(this.sizeOfTile, this.xOverflow, this.yOverflow, this.map);
-        this.timer = new Timer(Constants.GAME_SPEED, new GameLoop(gamePanel));
+        this.timer = new Timer(Constants.GAME_SPEED, this);
         this.statisticsPanel = new StatisticsPanel(this.yOverflow, this.timer, this.gamePanel, this.map);
     }
 
@@ -40,7 +42,6 @@ public class  GameMainFrame extends JFrame {
         this.add(statisticsPanel, BorderLayout.LINE_START);
         this.add(gamePanel, BorderLayout.LINE_END);
         setTitle(Constants.TITLE);
-        this.timer.start();
 
 
 
@@ -50,5 +51,15 @@ public class  GameMainFrame extends JFrame {
         setResizable(false);
         setVisible(true);
 
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        gamePanel.doOneLoop();
+        statisticsPanel.updateStats();
+    }
+
+    public void startSimulation(){
+        this.timer.start();
     }
 }
