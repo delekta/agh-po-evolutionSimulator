@@ -9,15 +9,19 @@ import Constants.Constants;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class GamePanel extends JPanel {
     private Map map;
     int sizeOfTile;
     int xOverflow;
     int yOverflow;
+    private boolean markDominant = false;
 
     BufferedImage WHITE_SNAKE_ON_JUNGLE = ImageIO.read(new File(Constants.WHITE_SNAKE_JUNGLE_URL));
     BufferedImage BLUE_SNAKE_ON_JUNGLE = ImageIO.read(new File(Constants.BLUE_SNAKE_JUNGLE_URL));
@@ -110,6 +114,36 @@ public class GamePanel extends JPanel {
                 g.drawImage(tileGrid[y][x], x * sizeOfTile, y * sizeOfTile, sizeOfTile, sizeOfTile, null);
             }
         }
+        if(markDominant){
+            markDominantGenotype(g);
+        }
+    }
+
+    public void toggleDominantGenotype(){
+        this.markDominant = !this.markDominant;
+    }
+
+    public boolean isDominantGenotypeMarked() {
+        return markDominant;
+    }
+
+    public void markDominantGenotype(Graphics g){
+        ArrayList<ArrayList<Animal>> animalsCopy = new ArrayList<>(this.map.animalHashMap.values());
+
+        for (ArrayList<Animal> animaList : animalsCopy) {
+            ArrayList<Animal> animalListCopy = new ArrayList<>(animaList);
+            for (Animal animal : animalListCopy) {
+                if(animal.getDominantGenotypes().contains(map.getDominantGenotype())){
+                    g.setColor(Color.RED);
+                    Graphics2D gr = (Graphics2D)g;
+                    gr.setColor(Color.RED);
+                    int x = animal.getPosition().x;
+                    int y = animal.getPosition().y;
+                    Shape ring = createRingShape(x*sizeOfTile + sizeOfTile/2, y * sizeOfTile + sizeOfTile/2, sizeOfTile/2, sizeOfTile/12);
+                    gr.fill(ring);
+                }
+            }
+        }
     }
 
     public void doOneLoop() {
@@ -119,6 +153,26 @@ public class GamePanel extends JPanel {
 
     private void update() {
         map.nextDay();
+    }
+
+
+    // Function Used To Mark Genotype
+    private static Shape createRingShape(
+            double centerX, double centerY, double outerRadius, double thickness)
+    {
+        Ellipse2D outer = new Ellipse2D.Double(
+                centerX - outerRadius,
+                centerY - outerRadius,
+                outerRadius + outerRadius,
+                outerRadius + outerRadius);
+        Ellipse2D inner = new Ellipse2D.Double(
+                centerX - outerRadius + thickness,
+                centerY - outerRadius + thickness,
+                outerRadius + outerRadius - thickness - thickness,
+                outerRadius + outerRadius - thickness - thickness);
+        Area area = new Area(outer);
+        area.subtract(new Area(inner));
+        return area;
     }
 
 

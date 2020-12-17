@@ -15,6 +15,7 @@ import java.io.IOException;
 
 public class StatisticsPanel extends JPanel {
     GameMainFrame gameMainFrame;
+    GamePanel gamePanel;
     private Map map;
     Timer timer;
     int yOverflow;
@@ -25,13 +26,14 @@ public class StatisticsPanel extends JPanel {
     JButton stopBtn;
     JButton nextDayBtn;
     JButton saveStats;
+    JButton markDominantGenotype;
+
 
     StopActionListener stopActionListener;
     StartActionListener startActionListener;
     NextDayActionListener nextDayActionListener;
     SaveStatsActionListener saveStatsActionListener;
-
-    GamePanel gamePanel;
+    MarkDominantGenotypeActionListener markDominantGenotypeActionListener;
 
     JLabel dayInfo;
     JLabel numberOfAnimalsInfo;
@@ -59,6 +61,7 @@ public class StatisticsPanel extends JPanel {
         startActionListener = new StartActionListener();
         nextDayActionListener = new NextDayActionListener();
         saveStatsActionListener = new SaveStatsActionListener();
+        markDominantGenotypeActionListener = new MarkDominantGenotypeActionListener();
 
         this.gamePanel = gamePanel;
         this.map = map;
@@ -67,6 +70,7 @@ public class StatisticsPanel extends JPanel {
         startBtn = new JButton("START");
         nextDayBtn = new JButton("NEXT DAY");
         saveStats = new JButton("SAVE STATS");
+        markDominantGenotype = new JButton("MARK DOMINANT GENOTYPE");
 
         dayInfo = new JLabel("  Day: " + map.getDay());
         numberOfAnimalsInfo = new JLabel("  Number of animals: " + map.getNumberOfAnimals());
@@ -97,11 +101,13 @@ public class StatisticsPanel extends JPanel {
         this.add(startBtn);
         this.add(nextDayBtn);
         this.add(saveStats);
+        this.add(markDominantGenotype);
 
         stopBtn.addActionListener(stopActionListener);
         startBtn.addActionListener(startActionListener);
         nextDayBtn.addActionListener(nextDayActionListener);
         saveStats.addActionListener(saveStatsActionListener);
+        markDominantGenotype.addActionListener(markDominantGenotypeActionListener);
     }
 
     private class StopActionListener implements ActionListener{
@@ -167,16 +173,29 @@ public class StatisticsPanel extends JPanel {
                 String userHomeFolder = System.getProperty("user.home");
                 userHomeFolder += "/Desktop/";
 
-                FileWriter writer = new FileWriter(userHomeFolder + "EvolutionStats.json");
+                FileWriter writer = new FileWriter(userHomeFolder + "EvolutionStats.txt");
                 writer.write(jsonString);
                 writer.close();
-                showMessageDialog(null, "Stats saved on Desktop (work on the mac)!");
+                showMessageDialog(null, "Stats saved on Desktop! [work on the mac]");
             } catch (IOException e2) {
                 System.out.println("exception " + e2.getMessage());
                 e2.printStackTrace();
             }
+        }
+    }
 
+    private class MarkDominantGenotypeActionListener implements ActionListener{
 
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            gamePanel.toggleDominantGenotype();
+            gamePanel.repaint();
+            if(gamePanel.isDominantGenotypeMarked()){
+                markDominantGenotype.setText("UNMARK DOMINANT GENOTYPE");
+            }
+            else{
+                markDominantGenotype.setText("MARK DOMINANT GENOTYPE");
+            }
         }
     }
 
