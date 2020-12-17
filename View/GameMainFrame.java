@@ -33,7 +33,7 @@ public class  GameMainFrame extends JFrame implements ActionListener {
 
         this.gamePanel = new GamePanel(this.sizeOfTile, this.xOverflow, this.yOverflow, this.map);
         this.timer = new Timer(Constants.GAME_SPEED, this);
-        this.statisticsPanel = new StatisticsPanel(this.yOverflow, this.timer, this.gamePanel, this.map);
+        this.statisticsPanel = new StatisticsPanel(this.yOverflow, this.timer, this.gamePanel, this.map, this);
     }
 
     private void initializeLayout() throws IOException {
