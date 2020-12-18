@@ -74,14 +74,23 @@ public class StatisticsPanel extends JPanel {
         this.map = map;
 
         stopBtn = new JButton("STOP");
+
         startBtn = new JButton("START");
+
         nextDayBtn = new JButton("NEXT DAY");
+
         saveStats = new JButton("SAVE STATS");
+
         markDominantGenotype = new JButton("<html><center> MARK DOMINANT GENOTYPE</center></html>");
         markDominantGenotype.setHorizontalAlignment(SwingConstants.CENTER);
+
         trackAnimal = new JButton("TRACK ANIMAL");
 
-        mapStatisticsTitle = new JLabel("  MAP STATS");
+        Font titleFont = new Font("Courier", Font.BOLD,22);
+        Font font = new Font("Courier", Font.BOLD,16);
+
+        mapStatisticsTitle = new JLabel("MAP STATS");
+        mapStatisticsTitle.setHorizontalAlignment(SwingConstants.CENTER);
         dayInfo = new JLabel("  Day: " + map.getDay());
         numberOfAnimalsInfo = new JLabel("  Number of animals: " + map.getNumberOfAnimals());
         numberOfGrassesInfo = new JLabel("  Number of grasses: " + map.getNumberOfGrasses());
@@ -90,10 +99,24 @@ public class StatisticsPanel extends JPanel {
         averageAgeOfDeathsInfo = new JLabel("  Average age of deaths: " + map.getAverageAgeOfDeaths());
         averageNumberOfChildrenInfo = new JLabel("  Average number of children: " + map.getAverageNumberOfChildren());
 
+        mapStatisticsTitle.setFont(titleFont);
+        dayInfo.setFont(font);
+        numberOfAnimalsInfo.setFont(font);
+        numberOfGrassesInfo.setFont(font);
+        dominantGenotypesInfo.setFont(font);
+        averageEnergyInfo.setFont(font);
+        averageAgeOfDeathsInfo.setFont(font);
+        averageNumberOfChildrenInfo.setFont(font);
+
         trackedAnimalStatisticsTitle = new JLabel("");
         numberOfChildren = new JLabel("");
         numberOfOffspring = new JLabel("");
         deathDate = new JLabel("");
+
+        trackedAnimalStatisticsTitle.setFont(titleFont);
+        numberOfChildren.setFont(font);
+        numberOfOffspring.setFont(font);
+        deathDate.setFont(font);
     }
 
     private void initializeLayout() {
@@ -324,7 +347,8 @@ public class StatisticsPanel extends JPanel {
     }
 
     public void updateTrackedAnimalStats(){
-        trackedAnimalStatisticsTitle.setText("  TRACKED ANIMAL STATS (stats since start of tracking)");
+        trackedAnimalStatisticsTitle.setText("TRACKED ANIMAL STATS");
+        trackedAnimalStatisticsTitle.setHorizontalAlignment(SwingConstants.CENTER);
         int numberNewChildren = gamePanel.getTrackedAnimal().getNumberOfChildren() - gamePanel.getNumberOfChildrenWhenTrackingStarted();
         numberOfChildren.setText("  Number of new children: " + numberNewChildren);
         numberOfOffspring.setText("  Number of new offspring: " + map.getNumberOfOffspringOfTrackedAnimal());
