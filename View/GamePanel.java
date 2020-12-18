@@ -34,6 +34,9 @@ public class GamePanel extends JPanel implements MouseListener {
     private boolean isAnimalTracked = false;
     private boolean isDeadAnnounced = false;
 
+    private int numberOfChildrenWhenTrackingStarted = 0;
+    private int dayOfTrackedAnimalDeath = 0;
+
     BufferedImage WHITE_SNAKE_ON_JUNGLE = ImageIO.read(new File(Constants.WHITE_SNAKE_JUNGLE_URL));
     BufferedImage BLUE_SNAKE_ON_JUNGLE = ImageIO.read(new File(Constants.BLUE_SNAKE_JUNGLE_URL));
     BufferedImage RED_SNAKE_ON_JUNGLE = ImageIO.read(new File(Constants.RED_SNAKE_JUNGLE_URL));
@@ -195,15 +198,31 @@ public class GamePanel extends JPanel implements MouseListener {
         this.trackedAnimal = trackedAnimal;
     }
 
+    public Animal getTrackedAnimal() {
+        return trackedAnimal;
+    }
+
+    public int getNumberOfChildrenWhenTrackingStarted() {
+        return numberOfChildrenWhenTrackingStarted;
+    }
+
+    public int getDayOfTrackedAnimalDeath() {
+        return dayOfTrackedAnimalDeath;
+    }
+
     public void doOneLoop() {
+        update();
+        repaint(); // paintComponent method is going to be called
         if(this.trackedAnimal != null && isAnimalTracked && this.trackedAnimal.isDead() && !this.isDeadAnnounced){
+            this.dayOfTrackedAnimalDeath = map.getDay();
             this.isDeadAnnounced = true;
             this.timer.stop();
             this.gameMainFrame.statisticsPanel.timerStop();
-            showMessageDialog(null, "Tracked animal passed away [*]");
+            showMessageDialog(null, "Tracked animal died on " + map.getDay() + " day [*]");
         }
-        update();
-        repaint(); // paintComponent method is going to be called
+        if(this.isAnimalTracked()){
+            gameMainFrame.statisticsPanel.updateTrackedAnimalStats();
+        }
     }
 
     private void update() {
@@ -256,8 +275,11 @@ public class GamePanel extends JPanel implements MouseListener {
             Object animal = map.objectAt(new Vector2d(x, y));
             if(animal instanceof Animal){
                 this.isDeadAnnounced = false;
+                this.numberOfChildrenWhenTrackingStarted = ((Animal) animal).getNumberOfChildren();
+                ((Animal) animal).setIsOffspringOfTrackedAnimal(true);
                 setTrackedAnimal((Animal)animal);
                 toggleIsAnimalTracked();
+                this.gameMainFrame.statisticsPanel.updateTrackedAnimalStats();
                 repaint();
                 toggleIsTrackedAnimalModeOn(); //setting false
             }

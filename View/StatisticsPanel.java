@@ -46,7 +46,10 @@ public class StatisticsPanel extends JPanel {
     JLabel averageAgeOfDeathsInfo;
     JLabel averageNumberOfChildrenInfo;
 
-
+    JLabel trackedAnimalStatisticsTitle;
+    JLabel numberOfChildren;
+    JLabel numberOfOffspring;
+    JLabel deathDate;
 
     public StatisticsPanel(int yOverflow, Timer timer, GamePanel gamePanel, Map map, GameMainFrame gameMainFrame){
         initializeVariables(yOverflow, timer, gamePanel, map, gameMainFrame);
@@ -78,7 +81,7 @@ public class StatisticsPanel extends JPanel {
         markDominantGenotype.setHorizontalAlignment(SwingConstants.CENTER);
         trackAnimal = new JButton("TRACK ANIMAL");
 
-        mapStatisticsTitle = new JLabel("  MAP STATISTICS");
+        mapStatisticsTitle = new JLabel("  MAP STATS");
         dayInfo = new JLabel("  Day: " + map.getDay());
         numberOfAnimalsInfo = new JLabel("  Number of animals: " + map.getNumberOfAnimals());
         numberOfGrassesInfo = new JLabel("  Number of grasses: " + map.getNumberOfGrasses());
@@ -86,6 +89,11 @@ public class StatisticsPanel extends JPanel {
         averageEnergyInfo = new JLabel("  Average animal energy: " + map.getAverageEnergy());
         averageAgeOfDeathsInfo = new JLabel("  Average age of deaths: " + map.getAverageAgeOfDeaths());
         averageNumberOfChildrenInfo = new JLabel("  Average number of children: " + map.getAverageNumberOfChildren());
+
+        trackedAnimalStatisticsTitle = new JLabel("");
+        numberOfChildren = new JLabel("");
+        numberOfOffspring = new JLabel("");
+        deathDate = new JLabel("");
     }
 
     private void initializeLayout() {
@@ -112,6 +120,11 @@ public class StatisticsPanel extends JPanel {
         mapStats.add(averageEnergyInfo);
         mapStats.add(averageAgeOfDeathsInfo);
         mapStats.add(averageNumberOfChildrenInfo);
+
+        trackedAnimal.add(trackedAnimalStatisticsTitle);
+        trackedAnimal.add(numberOfChildren);
+        trackedAnimal.add(numberOfOffspring);
+        trackedAnimal.add(deathDate);
 
         buttons.add(startBtn);
         buttons.add(stopBtn);
@@ -238,6 +251,8 @@ public class StatisticsPanel extends JPanel {
             if(!gamePanel.isAnimalTracked()){
                 trackAnimal.setText("UNTRACK ANIMAL");
             }else{
+                map.removeOffspringOfTrackedAnimal();
+                resetTrackedAnimalStats();
                 gamePanel.setTrackAnimalModeOn(false);
                 gamePanel.toggleIsAnimalTracked();
                 gamePanel.setTrackedAnimal(null);
@@ -306,6 +321,26 @@ public class StatisticsPanel extends JPanel {
         averageEnergyInfo.setText("  Average animal energy: " + map.getAverageEnergy());
         averageAgeOfDeathsInfo.setText("  Average age of deaths: " + map.getAverageAgeOfDeaths());
         averageNumberOfChildrenInfo.setText("  Average number of children: " + map.getAverageNumberOfChildren());
+    }
+
+    public void updateTrackedAnimalStats(){
+        trackedAnimalStatisticsTitle.setText("  TRACKED ANIMAL STATS (stats since start of tracking)");
+        int numberNewChildren = gamePanel.getTrackedAnimal().getNumberOfChildren() - gamePanel.getNumberOfChildrenWhenTrackingStarted();
+        numberOfChildren.setText("  Number of new children: " + numberNewChildren);
+        numberOfOffspring.setText("  Number of new offspring: " + map.getNumberOfOffspringOfTrackedAnimal());
+        if(!gamePanel.getTrackedAnimal().isDead()){
+            deathDate.setText("");
+        }
+        else{
+            deathDate.setText("  Animal died on " + gamePanel.getDayOfTrackedAnimalDeath() + " day");
+        }
+    }
+
+    public void resetTrackedAnimalStats(){
+        trackedAnimalStatisticsTitle.setText("");
+        numberOfChildren.setText("");
+        numberOfOffspring.setText("");
+        deathDate.setText("");
     }
 
 

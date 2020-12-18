@@ -28,6 +28,7 @@ public class Map implements IWorldMap {
     private double numberOfDeaths;
     private double sumOfChildren;
     private int[] numberOfDominantGenotypes;
+    private int numberOfOffspringOfTrackedAnimal;
 
     private static DecimalFormat df = new DecimalFormat("0.00");
 
@@ -40,6 +41,7 @@ public class Map implements IWorldMap {
         this.plantEnergy = plantEnergy;
         this.jungleRatio = jungleRatio;
         setJungle();
+        this.numberOfOffspringOfTrackedAnimal = 0;
     }
 
     public int getStartEnergy() {
@@ -105,7 +107,10 @@ public class Map implements IWorldMap {
         else{
             return 0;
         }
+    }
 
+    public int getNumberOfOffspringOfTrackedAnimal() {
+        return numberOfOffspringOfTrackedAnimal;
     }
 
     private void setJungle() {
@@ -135,6 +140,17 @@ public class Map implements IWorldMap {
 
                 // moves takes energy!
                 animal.changeEnergy(-this.moveEnergy);
+            }
+        }
+    }
+
+    public void removeOffspringOfTrackedAnimal(){
+        this.numberOfOffspringOfTrackedAnimal = 0;
+        ArrayList<ArrayList<Animal>> animalsCopy = new ArrayList<>(animalHashMap.values());
+        for (ArrayList<Animal> animaList : animalsCopy) {
+            ArrayList<Animal> animalListCopy = new ArrayList<>(animaList);
+            for (Animal animal : animalListCopy) {
+                animal.setIsOffspringOfTrackedAnimal(false);
             }
         }
     }
@@ -203,6 +219,9 @@ public class Map implements IWorldMap {
                 Animal newAnimal = Animal.reproduce(twoStrongest.get(0), twoStrongest.get(1));
                 // Parents can't reproduce when their enegry is too low, then reproduce return null
                 if (newAnimal != null) {
+                    if(newAnimal.isOffspringOfTrackedAnimal()){
+                        numberOfOffspringOfTrackedAnimal++;
+                    }
                     placeNewAnimal(twoStrongest.get(0).getPosition(), newAnimal);
                 }
             }

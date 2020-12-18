@@ -23,6 +23,12 @@ public class Animal implements IMapElement {
     private ArrayList<Integer> dominantGenotypes;
     private int[] genes;
     private boolean isDead = false;
+    private boolean isOffspringOfTrackedAnimal = false;
+
+    public void setIsOffspringOfTrackedAnimal(boolean isOffspringOfTrackedAnimal) {
+        this.isOffspringOfTrackedAnimal = isOffspringOfTrackedAnimal;
+    }
+
 
     public boolean isDead() {
         return isDead;
@@ -165,6 +171,10 @@ public class Animal implements IMapElement {
         return null;
     }
 
+    public boolean isOffspringOfTrackedAnimal() {
+        return isOffspringOfTrackedAnimal;
+    }
+
     public static Animal reproduce(Animal parent1, Animal parent2){
         if(parent1.getEnergy() >= 0.5 * parent1.getStartEnergy()
            && parent2.getEnergy() >= 0.5 * parent2.getStartEnergy()){
@@ -180,7 +190,8 @@ public class Animal implements IMapElement {
 
 
             Animal child = new Animal(parent1.map, parent1.getPosition(), childGenes);
-            // wiec dziecko dostaje taką energie, nie energie startową?
+            child.setIsOffspringOfTrackedAnimal(parent1.isOffspringOfTrackedAnimal || parent2.isOffspringOfTrackedAnimal);
+
             child.setEnergy(childEnergy);
 
             return child;
