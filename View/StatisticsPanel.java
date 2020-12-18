@@ -5,6 +5,9 @@ import Constants.Constants;
 import com.google.gson.Gson;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+
 import static javax.swing.JOptionPane.showMessageDialog;
 import java.awt.*;
 
@@ -74,11 +77,8 @@ public class StatisticsPanel extends JPanel {
         this.map = map;
 
         stopBtn = new JButton("STOP");
-
         startBtn = new JButton("START");
-
         nextDayBtn = new JButton("NEXT DAY");
-
         saveStats = new JButton("SAVE STATS");
 
         markDominantGenotype = new JButton("<html><center> MARK DOMINANT GENOTYPE</center></html>");
@@ -129,7 +129,11 @@ public class StatisticsPanel extends JPanel {
 
         mapStats.setLayout(new GridLayout(0,1));
         trackedAnimal.setLayout(new GridLayout(0,1));
-        buttons.setLayout(new GridLayout(0,2));
+        GridLayout layout = new GridLayout(0,2);
+        layout.setHgap(5);
+        layout.setVgap(5);
+        buttons.setLayout(layout);
+
 
         stopBtn.setEnabled(!isStopped);
         saveStats.setEnabled(!isStopped);
@@ -231,16 +235,15 @@ public class StatisticsPanel extends JPanel {
                     map.getAverageEnergy(), map.getAverageAgeOfDeaths(), map.getAverageNumberOfChildren());
 
             try {
+                // Zapisywanie na pulpit działa na macu, nie wiem jak na innych
                 String jsonString = gson.toJson(statsToSave);
-
-                // Na macu zapisuje dane na pulpit
                 String userHomeFolder = System.getProperty("user.home");
                 userHomeFolder += "/Desktop/";
 
                 FileWriter writer = new FileWriter(userHomeFolder + "EvolutionStats.txt");
                 writer.write(jsonString);
                 writer.close();
-                showMessageDialog(null, "Stats saved on Desktop! [work on the mac]");
+                showMessageDialog(null, "Stats saved on Desktop!");
             } catch (IOException e2) {
                 System.out.println("exception " + e2.getMessage());
                 e2.printStackTrace();
@@ -264,7 +267,6 @@ public class StatisticsPanel extends JPanel {
     }
 
     private class TrackAnimalActionListener implements ActionListener{
-
         @Override
         public void actionPerformed(ActionEvent ae) {
             if(isStopped && !gamePanel.isAnimalTracked()){
