@@ -103,7 +103,7 @@ public class Map implements IWorldMap {
             return indexOfMax;
         }
         else{
-            return -1;
+            return 0;
         }
 
     }
@@ -151,6 +151,7 @@ public class Map implements IWorldMap {
                     sumOfDeathsAge += this.day - animal.getDayOfBirth();
                     numberOfDeaths++;
                     removeFromHashMap(animal.getPosition(), animal);
+                    animal.setDead();
                 }
                 else{
                     _sumOfAnimalsEnergy += animal.getEnergy();

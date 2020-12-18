@@ -12,7 +12,6 @@ public class App {
          for(int i = 0; i < Constants.NUMBER_OF_MAPS; i++) {
                  try {
                      GameMainFrame gameMainFrame = new GameMainFrame();
-                     gameMainFrame.startSimulation();
                  } catch (IOException e) {
                      e.printStackTrace();
                  }

@@ -22,6 +22,15 @@ public class Animal implements IMapElement {
     private int numberOfChildren;
     private ArrayList<Integer> dominantGenotypes;
     private int[] genes;
+    private boolean isDead = false;
+
+    public boolean isDead() {
+        return isDead;
+    }
+
+    public void setDead(){
+        this.isDead = true;
+    }
 
     // Start Energy powinno byc przeniesione do Mapy???
     private final int startEnergy;

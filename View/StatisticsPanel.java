@@ -27,6 +27,7 @@ public class StatisticsPanel extends JPanel {
     JButton nextDayBtn;
     JButton saveStats;
     JButton markDominantGenotype;
+    JButton trackAnimal;
 
 
     StopActionListener stopActionListener;
@@ -34,7 +35,9 @@ public class StatisticsPanel extends JPanel {
     NextDayActionListener nextDayActionListener;
     SaveStatsActionListener saveStatsActionListener;
     MarkDominantGenotypeActionListener markDominantGenotypeActionListener;
+    TrackAnimalActionListener trackAnimalActionListener;
 
+    JLabel mapStatisticsTitle;
     JLabel dayInfo;
     JLabel numberOfAnimalsInfo;
     JLabel numberOfGrassesInfo;
@@ -53,8 +56,8 @@ public class StatisticsPanel extends JPanel {
     private void initializeVariables(int yOverflow, Timer timer, GamePanel gamePanel, Map map, GameMainFrame gameMainFrame){
         this.yOverflow = yOverflow;
         this.timer = timer;
-        this.isStarted = true;
-        this.isStopped = false;
+        this.isStarted = false;
+        this.isStopped = true;
         this.gameMainFrame = gameMainFrame;
 
         stopActionListener = new StopActionListener();
@@ -62,6 +65,7 @@ public class StatisticsPanel extends JPanel {
         nextDayActionListener = new NextDayActionListener();
         saveStatsActionListener = new SaveStatsActionListener();
         markDominantGenotypeActionListener = new MarkDominantGenotypeActionListener();
+        trackAnimalActionListener = new TrackAnimalActionListener();
 
         this.gamePanel = gamePanel;
         this.map = map;
@@ -70,8 +74,11 @@ public class StatisticsPanel extends JPanel {
         startBtn = new JButton("START");
         nextDayBtn = new JButton("NEXT DAY");
         saveStats = new JButton("SAVE STATS");
-        markDominantGenotype = new JButton("MARK DOMINANT GENOTYPE");
+        markDominantGenotype = new JButton("<html><center> MARK DOMINANT GENOTYPE</center></html>");
+        markDominantGenotype.setHorizontalAlignment(SwingConstants.CENTER);
+        trackAnimal = new JButton("TRACK ANIMAL");
 
+        mapStatisticsTitle = new JLabel("  MAP STATISTICS");
         dayInfo = new JLabel("  Day: " + map.getDay());
         numberOfAnimalsInfo = new JLabel("  Number of animals: " + map.getNumberOfAnimals());
         numberOfGrassesInfo = new JLabel("  Number of grasses: " + map.getNumberOfGrasses());
@@ -82,32 +89,47 @@ public class StatisticsPanel extends JPanel {
     }
 
     private void initializeLayout() {
-        setPreferredSize(new Dimension(Constants.BOARD_WIDTH / 2, Constants.BOARD_HEIGHT - yOverflow));
+        setPreferredSize(new Dimension(50 + Constants.BOARD_WIDTH / 2, Constants.BOARD_HEIGHT - yOverflow));
         setLayout(new GridLayout(0,1));
 
-        startBtn.setEnabled(isStopped);
-        nextDayBtn.setEnabled(isStopped);
-        saveStats.setEnabled(isStopped);
+        JPanel mapStats = new JPanel();
+        JPanel trackedAnimal = new JPanel();
+        JPanel buttons = new JPanel();
 
-        this.add(dayInfo);
-        this.add(numberOfAnimalsInfo);
-        this.add(numberOfGrassesInfo);
-        this.add(dominantGenotypesInfo);
-        this.add(averageEnergyInfo);
-        this.add(averageAgeOfDeathsInfo);
-        this.add(averageNumberOfChildrenInfo);
+        mapStats.setLayout(new GridLayout(0,1));
+        trackedAnimal.setLayout(new GridLayout(0,1));
+        buttons.setLayout(new GridLayout(0,2));
 
-        this.add(stopBtn);
-        this.add(startBtn);
-        this.add(nextDayBtn);
-        this.add(saveStats);
-        this.add(markDominantGenotype);
+        stopBtn.setEnabled(!isStopped);
+        saveStats.setEnabled(!isStopped);
+        markDominantGenotype.setEnabled(!isStopped);
+
+        mapStats.add(mapStatisticsTitle);
+        mapStats.add(dayInfo);
+        mapStats.add(numberOfAnimalsInfo);
+        mapStats.add(numberOfGrassesInfo);
+        mapStats.add(dominantGenotypesInfo);
+        mapStats.add(averageEnergyInfo);
+        mapStats.add(averageAgeOfDeathsInfo);
+        mapStats.add(averageNumberOfChildrenInfo);
+
+        buttons.add(startBtn);
+        buttons.add(stopBtn);
+        buttons.add(nextDayBtn);
+        buttons.add(markDominantGenotype);
+        buttons.add(saveStats);
+        buttons.add(trackAnimal);
+
+        this.add(mapStats);
+        this.add(trackedAnimal);
+        this.add(buttons);
 
         stopBtn.addActionListener(stopActionListener);
         startBtn.addActionListener(startActionListener);
         nextDayBtn.addActionListener(nextDayActionListener);
         saveStats.addActionListener(saveStatsActionListener);
         markDominantGenotype.addActionListener(markDominantGenotypeActionListener);
+        trackAnimal.addActionListener(trackAnimalActionListener);
     }
 
     private class StopActionListener implements ActionListener{
@@ -122,6 +144,8 @@ public class StatisticsPanel extends JPanel {
                 startBtn.setEnabled(isStopped);
                 nextDayBtn.setEnabled(isStopped);
                 saveStats.setEnabled(isStopped);
+                trackAnimal.setEnabled(isStopped);
+                markDominantGenotype.setEnabled(isStopped);
             }
 
         }
@@ -139,6 +163,8 @@ public class StatisticsPanel extends JPanel {
                 startBtn.setEnabled(isStopped);
                 nextDayBtn.setEnabled(isStopped);
                 saveStats.setEnabled(isStopped);
+                trackAnimal.setEnabled(isStopped);
+                markDominantGenotype.setEnabled(!isStopped);
             }
 
         }
@@ -150,6 +176,8 @@ public class StatisticsPanel extends JPanel {
             if(isStopped){
                 gamePanel.doOneLoop();
                 updateStats();
+                saveStats.setEnabled(isStopped);
+                markDominantGenotype.setEnabled(isStopped);
             }
 
         }
@@ -191,12 +219,43 @@ public class StatisticsPanel extends JPanel {
             gamePanel.toggleDominantGenotype();
             gamePanel.repaint();
             if(gamePanel.isDominantGenotypeMarked()){
-                markDominantGenotype.setText("UNMARK DOMINANT GENOTYPE");
+                markDominantGenotype.setText("<html><center>UNMARK DOMINANT GENOTYPE</center></html>");
             }
             else{
-                markDominantGenotype.setText("MARK DOMINANT GENOTYPE");
+                markDominantGenotype.setText("<html><center>MARK DOMINANT GENOTYPE</center></html>");
             }
         }
+    }
+
+    private class TrackAnimalActionListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            if(isStopped && !gamePanel.isAnimalTracked()){
+                showMessageDialog(null, "Click animal to track!");
+                gamePanel.toggleIsTrackedAnimalModeOn();
+            }
+            if(!gamePanel.isAnimalTracked()){
+                trackAnimal.setText("UNTRACK ANIMAL");
+            }else{
+                gamePanel.setTrackAnimalModeOn(false);
+                gamePanel.toggleIsAnimalTracked();
+                gamePanel.setTrackedAnimal(null);
+                gamePanel.repaint();
+                trackAnimal.setText("TRACK ANIMAL");
+            }
+        }
+    }
+
+    public void timerStop(){
+        isStarted = false;
+        isStopped = true;
+        stopBtn.setEnabled(isStarted);
+        startBtn.setEnabled(isStopped);
+        nextDayBtn.setEnabled(isStopped);
+        saveStats.setEnabled(isStopped);
+        trackAnimal.setEnabled(isStopped);
+        markDominantGenotype.setEnabled(isStopped);
     }
 
     public class StatsToSave{

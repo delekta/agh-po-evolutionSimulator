@@ -58,8 +58,4 @@ public class  GameMainFrame extends JFrame implements ActionListener {
         gamePanel.doOneLoop();
         statisticsPanel.updateStats();
     }
-
-    public void startSimulation(){
-        this.timer.start();
-    }
 }
