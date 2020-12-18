@@ -9,6 +9,8 @@ import Constants.Constants;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
@@ -16,8 +18,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class GamePanel extends JPanel {
+import static javax.swing.JOptionPane.showMessageDialog;
+
+public class GamePanel extends JPanel implements MouseListener {
     private Map map;
+    private Timer timer;
+    // is it really  neeeded?
+    private GameMainFrame gameMainFrame;
     int sizeOfTile;
     int xOverflow;
     int yOverflow;
@@ -39,16 +46,20 @@ public class GamePanel extends JPanel {
     BufferedImage EGG_GRASS = ImageIO.read(new File(Constants.EGG_GRASS_URL));
     BufferedImage EGG_JUNGLE = ImageIO.read(new File(Constants.EGG_JUNGLE_URL));
 
-    public GamePanel(int sizeOfTile, int xOverflow, int yOverflow, Map map) throws IOException {
-        initializeVariables(sizeOfTile, xOverflow, yOverflow, map);
+    public GamePanel(int sizeOfTile, int xOverflow, int yOverflow, Map map, GameMainFrame gameMainFrame, Timer timer) throws IOException {
+        initializeVariables(sizeOfTile, xOverflow, yOverflow, map, gameMainFrame, timer);
         initializeLayout();
     }
 
-     private void initializeVariables(int sizeOfTile, int xOverflow, int yOverflow, Map map) {
+     private void initializeVariables(int sizeOfTile, int xOverflow, int yOverflow, Map map, GameMainFrame gameMainFrame, Timer timer) {
          this.sizeOfTile = sizeOfTile;
          this.xOverflow = xOverflow;
          this.yOverflow = yOverflow;
         this.map = map;
+        this.gameMainFrame = gameMainFrame;
+        this.timer = timer;
+        // Needed To Mouse Listener
+         addMouseListener(this);
     }
 
     private void initializeLayout() {
@@ -176,4 +187,41 @@ public class GamePanel extends JPanel {
     }
 
 
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if(!this.timer.isRunning()){
+            int x = e.getX() / sizeOfTile;
+            int y = e.getY() / sizeOfTile;
+            Object animal = map.objectAt(new Vector2d(x, y));
+            if(animal instanceof Animal){
+                animal = (Animal) animal;
+                StringBuilder genotype = new StringBuilder();
+                int[] genotypeArray = ((Animal) animal).getGenes();
+                for(int gen: genotypeArray){
+                    genotype.append(" ").append(gen);
+                }
+                showMessageDialog(null, "Animal genotype: " + genotype);
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
 }

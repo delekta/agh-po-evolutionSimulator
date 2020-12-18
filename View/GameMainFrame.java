@@ -31,8 +31,8 @@ public class  GameMainFrame extends JFrame implements ActionListener {
         this.map = new Map(Constants.NUMBER_OF_TILES_Y, Constants.NUMBER_OF_TILES_X, Constants.START_ENERGY, Constants.MOVE_ENERGY, Constants.PLANT_ENERGY, Constants.JUNGLE_RATIO);
         this.map.placeNAnimalsOnMap(Constants.NUMBER_OF_ANIMALS);
 
-        this.gamePanel = new GamePanel(this.sizeOfTile, this.xOverflow, this.yOverflow, this.map);
         this.timer = new Timer(Constants.GAME_SPEED, this);
+        this.gamePanel = new GamePanel(this.sizeOfTile, this.xOverflow, this.yOverflow, this.map, this, timer);
         this.statisticsPanel = new StatisticsPanel(this.yOverflow, this.timer, this.gamePanel, this.map, this);
     }
 
