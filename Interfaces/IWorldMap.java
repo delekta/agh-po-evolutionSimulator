@@ -1,7 +1,7 @@
 package Interfaces;
 
-import Classes.Animal;
-import Classes.Vector2d;
+import Objects.Animal;
+import Objects.Vector2d;
 
 /**
  * The interface responsible for interacting with the map of the world.

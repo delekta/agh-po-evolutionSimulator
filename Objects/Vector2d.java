@@ -1,4 +1,4 @@
-package Classes;
+package Objects;
 
 public class Vector2d {
     public final int x;

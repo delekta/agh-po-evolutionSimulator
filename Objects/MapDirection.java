@@ -1,4 +1,4 @@
-package Classes;
+package Objects;
 
 public enum MapDirection {
     NORTH,
@@ -9,19 +9,6 @@ public enum MapDirection {
     SOUTHWEST,
     WEST,
     NORTHWEST;
-
-    public String toString(){
-        return switch(this) {
-            case NORTH -> "NORTH";
-            case NORTHEAST -> "NORTH-EAST";
-            case EAST -> "EAST";
-            case SOUTHEAST -> "SOUTH-EAST";
-            case SOUTH -> "SOUTH";
-            case SOUTHWEST -> "SOUTH-WEST" ;
-            case WEST -> "WEST";
-            case NORTHWEST -> "NORTH-WEST";
-        };
-    }
 
     public Vector2d toUnitVector(){
         return switch(this) {

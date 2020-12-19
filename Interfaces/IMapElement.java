@@ -1,6 +1,6 @@
 package Interfaces;
 
-import Classes.Vector2d;
+import Objects.Vector2d;
 
 public interface IMapElement {
     public Vector2d getPosition();

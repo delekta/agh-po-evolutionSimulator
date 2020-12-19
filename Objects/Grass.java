@@ -1,4 +1,4 @@
-package Classes;
+package Objects;
 
 import Interfaces.IMapElement;
 

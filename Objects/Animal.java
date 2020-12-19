@@ -1,4 +1,4 @@
-package Classes;
+package Objects;
 
 import Interfaces.IMapElement;
 import Interfaces.IPositionChangeObserver;
@@ -10,82 +10,18 @@ import java.util.List;
 import java.util.Random;
 
 public class Animal implements IMapElement {
-    public List<IPositionChangeObserver> observers = new ArrayList<>();
-    private IWorldMap map;
-    private MapDirection orientation = MapDirection.NORTH;
-    public void setOrientation(MapDirection o){ this.orientation = o;}
-    public MapDirection getOrientation() { return orientation; }
-    private Vector2d position = new Vector2d(2,2);
-    public void setPosition(Vector2d v){ this.position = v;}
-    public Vector2d getPosition(){return position;}
-    private int dayOfBirth;
+    private final List<IPositionChangeObserver> observers = new ArrayList<>();
+    private final IWorldMap map;
+    private final int dayOfBirth;
     private int numberOfChildren;
     private ArrayList<Integer> dominantGenotypes;
-    private int[] genes;
+    private final int[] genes;
+    private final int startEnergy;
+    private double energy;
     private boolean isDead = false;
     private boolean isOffspringOfTrackedAnimal = false;
-
-    public void setIsOffspringOfTrackedAnimal(boolean isOffspringOfTrackedAnimal) {
-        this.isOffspringOfTrackedAnimal = isOffspringOfTrackedAnimal;
-    }
-
-
-    public boolean isDead() {
-        return isDead;
-    }
-
-    public void setDead(){
-        this.isDead = true;
-    }
-
-    // Start Energy powinno byc przeniesione do Mapy???
-    private final int startEnergy;
-
-    private double energy;
-
-    public int getStartEnergy() {
-        return startEnergy;
-    }
-
-    public int getDayOfBirth() {
-        return dayOfBirth;
-    }
-
-    public double getEnergy() {
-        return this.energy;
-    }
-
-    public int getNumberOfChildren() {
-        return numberOfChildren;
-    }
-
-    public ArrayList<Integer> getDominantGenotypes() {
-        return dominantGenotypes;
-    }
-
-    public void changeEnergy(double changeValue){
-        this.energy += changeValue;
-    }
-    public void setEnergy(double energy){
-        this.energy = energy;
-    }
-
-    public int[] getGenes() {
-        return genes;
-    }
-
-    public void changeOrientation(){
-        Random random = new Random();
-        int valueOfTurn = this.genes[random.nextInt(32)];
-        int valueOfResult = (this.orientation.getValueOfDirection() + valueOfTurn) % 8;
-        this.orientation = MapDirection.getDirectionFromValue(valueOfResult);
-    }
-
-    public String toString(){
-        // to provide the same width of cell
-        String res = (this.energy < 10 && this.energy >= 0) ? String.valueOf((int)this.energy) + " " : String.valueOf((int)this.energy);
-        return res;
-    }
+    private MapDirection orientation = MapDirection.NORTH;
+    private Vector2d position = new Vector2d(2,2);
 
     // Constructors
     public Animal(IWorldMap map){
@@ -123,6 +59,29 @@ public class Animal implements IMapElement {
         setDominantGenotypes();
     }
 
+    // Getters
+    public MapDirection getOrientation() { return orientation; }
+
+    public int getStartEnergy() {
+        return startEnergy;
+    }
+
+    public int getDayOfBirth() {
+        return dayOfBirth;
+    }
+
+    public double getEnergy() {
+        return this.energy;
+    }
+
+    public int getNumberOfChildren() {
+        return numberOfChildren;
+    }
+
+    public ArrayList<Integer> getDominantGenotypes() {
+        return dominantGenotypes;
+    }
+
     private int[] getRandomGenes(){
         Random random = new Random();
         int [] genes = new int[32];
@@ -138,16 +97,74 @@ public class Animal implements IMapElement {
         return genes;
     }
 
-    // Function returns to strongest animals at one position
-    // When there is one animal, it returns one animal, it is useful in eating
-    public static ArrayList<Animal> getTwoStrongest(ArrayList<Animal> animals){
+    public Vector2d getPosition(){return position;}
 
-        // I callout this funcyion only when this condition is true
+    public boolean isDead() {
+        return isDead;
+    }
+
+    public int[] getGenes() {
+        return genes;
+    }
+
+    public boolean isOffspringOfTrackedAnimal() {
+        return isOffspringOfTrackedAnimal;
+    }
+
+
+    // Setters
+    public void setIsOffspringOfTrackedAnimal(boolean isOffspringOfTrackedAnimal) {
+        this.isOffspringOfTrackedAnimal = isOffspringOfTrackedAnimal;
+    }
+
+    public void setPosition(Vector2d v){ this.position = v;}
+
+    public void setDead(){
+        this.isDead = true;
+    }
+
+    public void setEnergy(double energy){
+        this.energy = energy;
+    }
+
+    public void setOrientation(MapDirection o){ this.orientation = o;}
+
+    public void changeEnergy(double changeValue){
+        this.energy += changeValue;
+    }
+
+    public void changeOrientation(){
+        Random random = new Random();
+        int valueOfTurn = this.genes[random.nextInt(32)];
+        int valueOfResult = (this.orientation.getValueOfDirection() + valueOfTurn) % 8;
+        this.orientation = MapDirection.getDirectionFromValue(valueOfResult);
+    }
+
+    private void setDominantGenotypes(){
+        int[] numberOfGenes = new int[8];
+        for(int i = 0; i < 32; i++){
+            numberOfGenes[this.getGenes()[i]]++;
+        }
+        int max = 0;
+        for(int i = 0; i < 8; i++){
+            if(numberOfGenes[i] > max){
+                max = numberOfGenes[i];
+            }
+        }
+        ArrayList<Integer> dominantGenotypes = new ArrayList<>();
+        for(int i = 0; i < 8; i++){
+            if(numberOfGenes[i] == max){
+                dominantGenotypes.add(i);
+            }
+        }
+        this.dominantGenotypes = dominantGenotypes;
+    }
+
+    public static ArrayList<Animal> getTwoStrongest(ArrayList<Animal> animals){
         if(animals.size() > 1){
             Animal animal1 = animals.get(1);
             Animal animal2 = animals.get(0);
 
-            // animal1 is bigger than animal2
             if(animals.get(0).getEnergy() >= animals.get(1).getEnergy()){
                 animal1 = animals.get(0);
                 animal2 = animals.get(1);
@@ -161,7 +178,7 @@ public class Animal implements IMapElement {
                     animal2 = animals.get(i);
                 }
             }
-            ArrayList res = new ArrayList<Animal>();
+            ArrayList<Animal> res = new ArrayList<Animal>();
             res.add(animal1);
             res.add(animal2);
             return res;
@@ -171,29 +188,21 @@ public class Animal implements IMapElement {
         return null;
     }
 
-    public boolean isOffspringOfTrackedAnimal() {
-        return isOffspringOfTrackedAnimal;
-    }
-
     public static Animal reproduce(Animal parent1, Animal parent2){
         if(parent1.getEnergy() >= 0.5 * parent1.getStartEnergy()
            && parent2.getEnergy() >= 0.5 * parent2.getStartEnergy()){
-            // rodzice tracą 1/4 energii?
             double childEnergy = 0.25 * parent1.getEnergy() + 0.25 * parent2.getEnergy();
             parent1.changeEnergy(-0.25 * parent1.getEnergy());
             parent2.changeEnergy(-0.25 * parent2.getEnergy());
+
             parent1.numberOfChildren++;
             parent2.numberOfChildren++;
 
             int[] childGenes;
             childGenes = parent1.getGenesFromParents(parent1, parent2);
-
-
             Animal child = new Animal(parent1.map, parent1.getPosition(), childGenes);
-            child.setIsOffspringOfTrackedAnimal(parent1.isOffspringOfTrackedAnimal || parent2.isOffspringOfTrackedAnimal);
-
             child.setEnergy(childEnergy);
-
+            child.setIsOffspringOfTrackedAnimal(parent1.isOffspringOfTrackedAnimal || parent2.isOffspringOfTrackedAnimal);
             return child;
         }
         return null;
@@ -217,10 +226,9 @@ public class Animal implements IMapElement {
             }
         }
         Arrays.sort(childGenes);
-        // Checking if genes conatins all orientations
-        int currentVal = childGenes[0];
+        // Checking if genes contains all orientations
+        int currentVal;
         int expectedVal = 0;
-
         int i = 0;
         while(i < 32){
             currentVal = childGenes[i];
@@ -243,32 +251,9 @@ public class Animal implements IMapElement {
         return childGenes;
     }
 
-    private void setDominantGenotypes(){
-        int[] numberOfGenes = new int[8];
-        for(int i = 0; i < 32; i++){
-            numberOfGenes[this.getGenes()[i]]++;
-        }
-        int max = 0;
-        for(int i = 0; i < 8; i++){
-            if(numberOfGenes[i] > max){
-                max = numberOfGenes[i];
-            }
-        }
-        ArrayList<Integer> dominantGenotypes = new ArrayList<>();
-        for(int i = 0; i < 8; i++){
-            if(numberOfGenes[i] == max){
-                dominantGenotypes.add(i);
-            }
-        }
-        this.dominantGenotypes = dominantGenotypes;
-    }
-
+    // Observers Functions
     private void addObserver(IPositionChangeObserver observer){
         observers.add(observer);
-    }
-
-    private void removeObserver(IPositionChangeObserver observer){
-        observers.remove(observer);
     }
 
     public void notifyPositionChanged(Vector2d oldPosition, Vector2d newPosition){
@@ -276,6 +261,4 @@ public class Animal implements IMapElement {
             o.positionChanged(oldPosition, newPosition, this);
         }
     }
-
-
 }

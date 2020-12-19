@@ -1,16 +1,10 @@
 package View;
-
-import Classes.Map;
+import Objects.Map;
 import Constants.Constants;
 import com.google.gson.Gson;
-
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
-
 import static javax.swing.JOptionPane.showMessageDialog;
 import java.awt.*;
-
 import java.awt.event.ActionListener;
 import  java.awt.event.ActionEvent;
 import java.io.FileWriter;
@@ -21,25 +15,21 @@ public class StatisticsPanel extends JPanel {
     GamePanel gamePanel;
     private Map map;
     Timer timer;
-    int yOverflow;
+    private int yOverflow;
     boolean isStarted;
     boolean isStopped;
-
     JButton startBtn;
     JButton stopBtn;
     JButton nextDayBtn;
     JButton saveStats;
     JButton markDominantGenotype;
     JButton trackAnimal;
-
-
     StopActionListener stopActionListener;
     StartActionListener startActionListener;
     NextDayActionListener nextDayActionListener;
     SaveStatsActionListener saveStatsActionListener;
     MarkDominantGenotypeActionListener markDominantGenotypeActionListener;
     TrackAnimalActionListener trackAnimalActionListener;
-
     JLabel mapStatisticsTitle;
     JLabel dayInfo;
     JLabel numberOfAnimalsInfo;
@@ -48,7 +38,6 @@ public class StatisticsPanel extends JPanel {
     JLabel averageEnergyInfo;
     JLabel averageAgeOfDeathsInfo;
     JLabel averageNumberOfChildrenInfo;
-
     JLabel trackedAnimalStatisticsTitle;
     JLabel numberOfChildren;
     JLabel numberOfOffspring;
@@ -65,6 +54,8 @@ public class StatisticsPanel extends JPanel {
         this.isStarted = false;
         this.isStopped = true;
         this.gameMainFrame = gameMainFrame;
+        this.gamePanel = gamePanel;
+        this.map = map;
 
         stopActionListener = new StopActionListener();
         startActionListener = new StartActionListener();
@@ -73,21 +64,13 @@ public class StatisticsPanel extends JPanel {
         markDominantGenotypeActionListener = new MarkDominantGenotypeActionListener();
         trackAnimalActionListener = new TrackAnimalActionListener();
 
-        this.gamePanel = gamePanel;
-        this.map = map;
-
         stopBtn = new JButton("STOP");
         startBtn = new JButton("START");
         nextDayBtn = new JButton("NEXT DAY");
         saveStats = new JButton("SAVE STATS");
-
         markDominantGenotype = new JButton("<html><center> MARK DOMINANT GENOTYPE</center></html>");
         markDominantGenotype.setHorizontalAlignment(SwingConstants.CENTER);
-
         trackAnimal = new JButton("TRACK ANIMAL");
-
-        Font titleFont = new Font("Courier", Font.BOLD,22);
-        Font font = new Font("Courier", Font.BOLD,16);
 
         mapStatisticsTitle = new JLabel("MAP STATS");
         mapStatisticsTitle.setHorizontalAlignment(SwingConstants.CENTER);
@@ -98,7 +81,13 @@ public class StatisticsPanel extends JPanel {
         averageEnergyInfo = new JLabel("  Average animal energy: " + map.getAverageEnergy());
         averageAgeOfDeathsInfo = new JLabel("  Average age of deaths: " + map.getAverageAgeOfDeaths());
         averageNumberOfChildrenInfo = new JLabel("  Average number of children: " + map.getAverageNumberOfChildren());
+        trackedAnimalStatisticsTitle = new JLabel("");
+        numberOfChildren = new JLabel("");
+        numberOfOffspring = new JLabel("");
+        deathDate = new JLabel("");
 
+        Font titleFont = new Font("Courier", Font.BOLD,22);
+        Font font = new Font("Courier", Font.BOLD,16);
         mapStatisticsTitle.setFont(titleFont);
         dayInfo.setFont(font);
         numberOfAnimalsInfo.setFont(font);
@@ -107,12 +96,6 @@ public class StatisticsPanel extends JPanel {
         averageEnergyInfo.setFont(font);
         averageAgeOfDeathsInfo.setFont(font);
         averageNumberOfChildrenInfo.setFont(font);
-
-        trackedAnimalStatisticsTitle = new JLabel("");
-        numberOfChildren = new JLabel("");
-        numberOfOffspring = new JLabel("");
-        deathDate = new JLabel("");
-
         trackedAnimalStatisticsTitle.setFont(titleFont);
         numberOfChildren.setFont(font);
         numberOfOffspring.setFont(font);
@@ -133,7 +116,6 @@ public class StatisticsPanel extends JPanel {
         layout.setHgap(5);
         layout.setVgap(5);
         buttons.setLayout(layout);
-
 
         stopBtn.setEnabled(!isStopped);
         saveStats.setEnabled(!isStopped);
@@ -173,26 +155,16 @@ public class StatisticsPanel extends JPanel {
     }
 
     private class StopActionListener implements ActionListener{
-
         @Override
         public void actionPerformed(ActionEvent ae) {
             if(isStarted){
                 timer.stop();
-                isStarted = false;
-                isStopped = true;
-                stopBtn.setEnabled(isStarted);
-                startBtn.setEnabled(isStopped);
-                nextDayBtn.setEnabled(isStopped);
-                saveStats.setEnabled(isStopped);
-                trackAnimal.setEnabled(isStopped);
-                markDominantGenotype.setEnabled(isStopped);
+                timerStop();
             }
-
         }
     }
     
     private class StartActionListener implements ActionListener{
-
         @Override
         public void actionPerformed(ActionEvent ae) {
             if(isStopped){
@@ -209,37 +181,31 @@ public class StatisticsPanel extends JPanel {
 
         }
     }
-    private class NextDayActionListener implements ActionListener{
 
+    private class NextDayActionListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent ae) {
             if(isStopped){
                 gamePanel.doOneLoop();
-                updateStats();
+                updateMapStats();
                 saveStats.setEnabled(isStopped);
                 markDominantGenotype.setEnabled(isStopped);
             }
-
         }
     }
 
     private class SaveStatsActionListener implements ActionListener{
-
         @Override
         public void actionPerformed(ActionEvent e) {
             Gson gson = new Gson();
-
             StatsToSave statsToSave = new StatsToSave(Constants.NUMBER_OF_TILES_X, Constants.NUMBER_OF_TILES_Y,
                     Constants.START_ENERGY, Constants.NUMBER_OF_ANIMALS, Constants.MOVE_ENERGY, Constants.PLANT_ENERGY,
                     Constants.JUNGLE_RATIO, map.getDay(), map.getNumberOfAnimals(), map.getNumberOfGrasses(), map.getDominantGenotype(),
                     map.getAverageEnergy(), map.getAverageAgeOfDeaths(), map.getAverageNumberOfChildren());
-
             try {
-                // Zapisywanie na pulpit działa na macu, nie wiem jak na innych
                 String jsonString = gson.toJson(statsToSave);
                 String userHomeFolder = System.getProperty("user.home");
                 userHomeFolder += "/Desktop/";
-
                 FileWriter writer = new FileWriter(userHomeFolder + "EvolutionStats.txt");
                 writer.write(jsonString);
                 writer.close();
@@ -252,7 +218,6 @@ public class StatisticsPanel extends JPanel {
     }
 
     private class MarkDominantGenotypeActionListener implements ActionListener{
-
         @Override
         public void actionPerformed(ActionEvent ae) {
             gamePanel.toggleDominantGenotype();
@@ -271,14 +236,14 @@ public class StatisticsPanel extends JPanel {
         public void actionPerformed(ActionEvent ae) {
             if(isStopped && !gamePanel.isAnimalTracked()){
                 showMessageDialog(null, "Click animal to track!");
-                gamePanel.toggleIsTrackedAnimalModeOn();
+                gamePanel.toggleIsFindAnimalToTrackModeOn();
             }
             if(!gamePanel.isAnimalTracked()){
                 trackAnimal.setText("UNTRACK ANIMAL");
             }else{
                 map.removeOffspringOfTrackedAnimal();
                 resetTrackedAnimalStats();
-                gamePanel.setTrackAnimalModeOn(false);
+                gamePanel.setFindAnimalToTrackModeOn(false);
                 gamePanel.toggleIsAnimalTracked();
                 gamePanel.setTrackedAnimal(null);
                 gamePanel.repaint();
@@ -298,7 +263,7 @@ public class StatisticsPanel extends JPanel {
         markDominantGenotype.setEnabled(isStopped);
     }
 
-    public class StatsToSave{
+    public static class StatsToSave{
         // Start Values
         int numberOfTilesX;
         int numberOfTilesY;
@@ -338,7 +303,7 @@ public class StatisticsPanel extends JPanel {
         }
     }
 
-    public void updateStats(){
+    public void updateMapStats(){
         dayInfo.setText("  Day: " + map.getDay());
         numberOfAnimalsInfo.setText("  Number of animals: " + map.getNumberOfAnimals());
         numberOfGrassesInfo.setText("  Number of grasses: " + map.getNumberOfGrasses());

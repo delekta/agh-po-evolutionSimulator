@@ -1,11 +1,9 @@
 package View;
-
-import Classes.Animal;
-import Classes.Grass;
-import Classes.Map;
-import Classes.Vector2d;
+import Objects.Animal;
+import Objects.Grass;
+import Objects.Map;
+import Objects.Vector2d;
 import Constants.Constants;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -17,39 +15,33 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class GamePanel extends JPanel implements MouseListener {
     private Map map;
     private Timer timer;
-    // is it really  neeeded?
     private GameMainFrame gameMainFrame;
     int sizeOfTile;
     int xOverflow;
     int yOverflow;
     private boolean markDominant = false;
     private Animal trackedAnimal = null;
-    private boolean isTrackAnimalModeOn = false;
+    private boolean isFindAnimalToTrackModeOn = false;
     private boolean isAnimalTracked = false;
     private boolean isDeadAnnounced = false;
-
     private int numberOfChildrenWhenTrackingStarted = 0;
     private int dayOfTrackedAnimalDeath = 0;
-
+    // Images To Needed Build Map
     BufferedImage WHITE_SNAKE_ON_JUNGLE = ImageIO.read(new File(Constants.WHITE_SNAKE_JUNGLE_URL));
     BufferedImage BLUE_SNAKE_ON_JUNGLE = ImageIO.read(new File(Constants.BLUE_SNAKE_JUNGLE_URL));
     BufferedImage RED_SNAKE_ON_JUNGLE = ImageIO.read(new File(Constants.RED_SNAKE_JUNGLE_URL));
     BufferedImage GOLD_SNAKE_ON_JUNGLE = ImageIO.read(new File(Constants.GOLD_SNAKE_JUNGLE_URL));
-
     BufferedImage WHITE_SNAKE_ON_GRASS = ImageIO.read(new File(Constants.WHITE_SNAKE_GRASS_URL));
     BufferedImage BLUE_SNAKE_ON_GRASS = ImageIO.read(new File(Constants.BLUE_SNAKE_GRASS_URL));
     BufferedImage RED_SNAKE_ON_GRASS = ImageIO.read(new File(Constants.RED_SNAKE_GRASS_URL));
     BufferedImage GOLD_SNAKE_ON_GRASS = ImageIO.read(new File(Constants.GOLD_SNAKE_GRASS_URL));
-
     BufferedImage GRASS_TILE = ImageIO.read(new File(Constants.GRASS_TILE_URL));
     BufferedImage JUNGLE_TILE = ImageIO.read(new File(Constants.JUNGLE_TILE_URL));
-
     BufferedImage EGG_GRASS = ImageIO.read(new File(Constants.EGG_GRASS_URL));
     BufferedImage EGG_JUNGLE = ImageIO.read(new File(Constants.EGG_JUNGLE_URL));
 
@@ -61,12 +53,11 @@ public class GamePanel extends JPanel implements MouseListener {
      private void initializeVariables(int sizeOfTile, int xOverflow, int yOverflow, Map map, GameMainFrame gameMainFrame, Timer timer) {
          this.sizeOfTile = sizeOfTile;
          this.xOverflow = xOverflow;
-         this.yOverflow = yOverflow;
+        this.yOverflow = yOverflow;
         this.map = map;
         this.gameMainFrame = gameMainFrame;
         this.timer = timer;
-        // Needed To Mouse Listener
-         addMouseListener(this);
+        addMouseListener(this);
     }
 
     private void initializeLayout() {
@@ -140,31 +131,6 @@ public class GamePanel extends JPanel implements MouseListener {
         }
     }
 
-    public void toggleDominantGenotype(){
-        this.markDominant = !this.markDominant;
-    }
-
-    public boolean isTrackAnimalModeOn() {
-        return isTrackAnimalModeOn;
-    }
-
-    public void toggleIsTrackedAnimalModeOn(){
-        this.isTrackAnimalModeOn = !this.isTrackAnimalModeOn;
-    }
-
-    public boolean isAnimalTracked() {
-        return isAnimalTracked;
-    }
-
-    public void toggleIsAnimalTracked(){
-        this.isAnimalTracked = !this.isAnimalTracked;
-    }
-
-
-    public boolean isDominantGenotypeMarked() {
-        return markDominant;
-    }
-
     public void markDominantGenotype(Graphics g){
         ArrayList<ArrayList<Animal>> animalsCopy = new ArrayList<>(this.map.animalHashMap.values());
 
@@ -194,22 +160,6 @@ public class GamePanel extends JPanel implements MouseListener {
         }
     }
 
-    public void setTrackedAnimal(Animal trackedAnimal) {
-        this.trackedAnimal = trackedAnimal;
-    }
-
-    public Animal getTrackedAnimal() {
-        return trackedAnimal;
-    }
-
-    public int getNumberOfChildrenWhenTrackingStarted() {
-        return numberOfChildrenWhenTrackingStarted;
-    }
-
-    public int getDayOfTrackedAnimalDeath() {
-        return dayOfTrackedAnimalDeath;
-    }
-
     public void doOneLoop() {
         update();
         repaint(); // paintComponent method is going to be called
@@ -229,8 +179,86 @@ public class GamePanel extends JPanel implements MouseListener {
         map.nextDay();
     }
 
+    // Toggle Functions
+    public void toggleDominantGenotype(){
+        this.markDominant = !this.markDominant;
+    }
 
-    // Function Used To Mark Genotype
+    public void toggleIsFindAnimalToTrackModeOn(){
+        this.isFindAnimalToTrackModeOn = !this.isFindAnimalToTrackModeOn;
+    }
+
+    public void toggleIsAnimalTracked(){
+        this.isAnimalTracked = !this.isAnimalTracked;
+    }
+
+    // Getters
+    public boolean isFindAnimalToTrackModeOn() {
+        return isFindAnimalToTrackModeOn;
+    }
+
+    public boolean isAnimalTracked() {
+        return isAnimalTracked;
+    }
+
+    public boolean isDominantGenotypeMarked() {
+        return markDominant;
+    }
+
+    public Animal getTrackedAnimal() {
+        return trackedAnimal;
+    }
+
+    public int getNumberOfChildrenWhenTrackingStarted() {
+        return numberOfChildrenWhenTrackingStarted;
+    }
+
+    public int getDayOfTrackedAnimalDeath() {
+        return dayOfTrackedAnimalDeath;
+    }
+
+    // Setters
+    public void setTrackedAnimal(Animal trackedAnimal) {
+        this.trackedAnimal = trackedAnimal;
+    }
+
+    public void setFindAnimalToTrackModeOn(boolean trackAnimalModeOn) {
+        isFindAnimalToTrackModeOn = trackAnimalModeOn;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if(!this.timer.isRunning() && !isFindAnimalToTrackModeOn){
+            int x = e.getX() / sizeOfTile;
+            int y = e.getY() / sizeOfTile;
+            Object animal = map.objectAt(new Vector2d(x, y));
+            if(animal instanceof Animal){
+                StringBuilder genotype = new StringBuilder();
+                int[] genotypeArray = ((Animal) animal).getGenes();
+                for(int gen: genotypeArray){
+                    genotype.append(" ").append(gen);
+                }
+                showMessageDialog(null, "Animal genotype: " + genotype);
+            }
+        }
+        else if(!this.timer.isRunning() && isFindAnimalToTrackModeOn()){
+            int x = e.getX() / sizeOfTile;
+            int y = e.getY() / sizeOfTile;
+            Object animal = map.objectAt(new Vector2d(x, y));
+            if(animal instanceof Animal){
+                this.isDeadAnnounced = false;
+                this.numberOfChildrenWhenTrackingStarted = ((Animal) animal).getNumberOfChildren();
+                ((Animal) animal).setIsOffspringOfTrackedAnimal(true);
+                setTrackedAnimal((Animal)animal);
+                toggleIsAnimalTracked();
+                this.gameMainFrame.statisticsPanel.updateTrackedAnimalStats();
+                repaint();
+                toggleIsFindAnimalToTrackModeOn(); //setting false
+            }
+        }
+    }
+
+    // Function Used To Mark Genotype And Tracked Animal
     private static Shape createRingShape(
             double centerX, double centerY, double outerRadius, double thickness)
     {
@@ -247,43 +275,6 @@ public class GamePanel extends JPanel implements MouseListener {
         Area area = new Area(outer);
         area.subtract(new Area(inner));
         return area;
-    }
-
-    public void setTrackAnimalModeOn(boolean trackAnimalModeOn) {
-        isTrackAnimalModeOn = trackAnimalModeOn;
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        if(!this.timer.isRunning() && !isTrackAnimalModeOn){
-            int x = e.getX() / sizeOfTile;
-            int y = e.getY() / sizeOfTile;
-            Object animal = map.objectAt(new Vector2d(x, y));
-            if(animal instanceof Animal){
-                animal = (Animal) animal;
-                StringBuilder genotype = new StringBuilder();
-                int[] genotypeArray = ((Animal) animal).getGenes();
-                for(int gen: genotypeArray){
-                    genotype.append(" ").append(gen);
-                }
-                showMessageDialog(null, "Animal genotype: " + genotype);
-            }
-        }
-        else if(!this.timer.isRunning() && isTrackAnimalModeOn()){
-            int x = e.getX() / sizeOfTile;
-            int y = e.getY() / sizeOfTile;
-            Object animal = map.objectAt(new Vector2d(x, y));
-            if(animal instanceof Animal){
-                this.isDeadAnnounced = false;
-                this.numberOfChildrenWhenTrackingStarted = ((Animal) animal).getNumberOfChildren();
-                ((Animal) animal).setIsOffspringOfTrackedAnimal(true);
-                setTrackedAnimal((Animal)animal);
-                toggleIsAnimalTracked();
-                this.gameMainFrame.statisticsPanel.updateTrackedAnimalStats();
-                repaint();
-                toggleIsTrackedAnimalModeOn(); //setting false
-            }
-        }
     }
 
     @Override
