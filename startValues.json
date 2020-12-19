@@ -1,8 +1,8 @@
 {
   "numberOfTilesX": 10,
   "numberOfTilesY": 10,
-  "numberOfMaps": 2,
-  "startEnergy": 100,
+  "numberOfMaps": 1,
+  "startEnergy": 20,
   "numberOfAnimals": 4,
   "moveEnergy": 1,
   "plantEnergy": 10,

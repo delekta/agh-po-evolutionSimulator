@@ -313,6 +313,15 @@ public class StatisticsPanel extends JPanel {
         averageNumberOfChildrenInfo.setText("  Average number of children: " + map.getAverageNumberOfChildren());
     }
 
+    public void disableButtons(){
+        startBtn.setEnabled(false);
+        stopBtn.setEnabled(false);
+        nextDayBtn.setEnabled(false);
+        saveStats.setEnabled(true);
+        markDominantGenotype.setEnabled(false);
+        trackAnimal.setEnabled(false);
+    }
+
     public void updateTrackedAnimalStats(){
         trackedAnimalStatisticsTitle.setText("TRACKED ANIMAL STATS");
         trackedAnimalStatisticsTitle.setHorizontalAlignment(SwingConstants.CENTER);

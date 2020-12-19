@@ -22,9 +22,9 @@ public class GamePanel extends JPanel implements MouseListener {
     private Map map;
     private Timer timer;
     private GameMainFrame gameMainFrame;
-    int sizeOfTile;
-    int xOverflow;
-    int yOverflow;
+    private int sizeOfTile;
+    private int xOverflow;
+    private int yOverflow;
     private boolean markDominant = false;
     private Animal trackedAnimal = null;
     private boolean isFindAnimalToTrackModeOn = false;

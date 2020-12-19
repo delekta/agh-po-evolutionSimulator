@@ -23,6 +23,7 @@ public class Map implements IWorldMap {
     private double sumOfChildren;
     private int[] numberOfDominantGenotypes;
     private int numberOfOffspringOfTrackedAnimal;
+    private boolean areAllAnimalsDead;
 
     public Map(int height, int width, int startEnergy, int moveEnergy, int plantEnergy, double jungleRatio) {
         this.day = 0;
@@ -34,6 +35,7 @@ public class Map implements IWorldMap {
         this.jungleRatio = jungleRatio;
         setJungle();
         this.numberOfOffspringOfTrackedAnimal = 0;
+        this.areAllAnimalsDead = false;
     }
 
     // Getters
@@ -94,6 +96,10 @@ public class Map implements IWorldMap {
 
     public int getNumberOfOffspringOfTrackedAnimal() {
         return numberOfOffspringOfTrackedAnimal;
+    }
+
+    public boolean areAllAnimalsDead() {
+        return areAllAnimalsDead;
     }
 
     // Setters
@@ -200,6 +206,9 @@ public class Map implements IWorldMap {
                     numberOfDeaths++;
                     removeFromAnimalHashMap(animal.getPosition(), animal);
                     animal.setDead();
+                    if(numberOfAnimals <= 0){
+                        this.areAllAnimalsDead = true;
+                    }
                 }
                 else{
                     _sumOfAnimalsEnergy += animal.getEnergy();

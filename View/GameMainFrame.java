@@ -7,7 +7,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
+import static javax.swing.JOptionPane.showMessageDialog;
+
 public class  GameMainFrame extends JFrame implements ActionListener {
+    Map map;
     int sizeOfTile;
     int xOverflow;
     int yOverflow;
@@ -25,7 +28,7 @@ public class  GameMainFrame extends JFrame implements ActionListener {
         this.sizeOfTile = (int) ((Math.min(Constants.BOARD_WIDTH, Constants.BOARD_HEIGHT) / Math.max(Constants.NUMBER_OF_TILES_X, Constants.NUMBER_OF_TILES_Y)));
         this.xOverflow = Constants.BOARD_WIDTH - sizeOfTile * Constants.NUMBER_OF_TILES_X;
         this.yOverflow = Constants.BOARD_HEIGHT - sizeOfTile * Constants.NUMBER_OF_TILES_Y;
-        Map map = new Map(Constants.NUMBER_OF_TILES_Y, Constants.NUMBER_OF_TILES_X, Constants.START_ENERGY, Constants.MOVE_ENERGY, Constants.PLANT_ENERGY, Constants.JUNGLE_RATIO);
+        this.map = new Map(Constants.NUMBER_OF_TILES_Y, Constants.NUMBER_OF_TILES_X, Constants.START_ENERGY, Constants.MOVE_ENERGY, Constants.PLANT_ENERGY, Constants.JUNGLE_RATIO);
         map.placeNAnimalsOnMap(Constants.NUMBER_OF_ANIMALS);
         this.timer = new Timer(Constants.GAME_SPEED, this);
         this.gamePanel = new GamePanel(this.sizeOfTile, this.xOverflow, this.yOverflow, map, this, timer);
@@ -46,6 +49,13 @@ public class  GameMainFrame extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         gamePanel.doOneLoop();
-        statisticsPanel.updateMapStats();
+        if(map.areAllAnimalsDead()){
+            timer.stop();
+            showMessageDialog(null, "All animals are dead!");
+            statisticsPanel.disableButtons();
+        }
+        else {
+            statisticsPanel.updateMapStats();
+        }
     }
 }
