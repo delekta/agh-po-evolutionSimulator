@@ -21,9 +21,10 @@ public interface IWorldMap extends IPositionChangeObserver{
 //      Modified from orginal IWorldMap
 //    boolean canMoveTo(Vector2d position);
 
-    // added to getStartEnergy from map that is passed as IWorldMap argument to Animal Constructor
+    // Added To GetStartEnergy From Map That Is Passed As IWorldMap Argument To Animal Constructor
     int getStartEnergy();
 
+    // Returns Current Day Of Simulation
     int getDay();
     /**
      * Place a animal on the map.

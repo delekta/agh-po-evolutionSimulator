@@ -1,14 +1,8 @@
 package Constants;
-
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-
-import static Constants.Constants.initializeVariables;
 
 public class Constants {
     private Constants(){
@@ -23,20 +17,19 @@ public class Constants {
     public static int NUMBER_OF_TILES_X;
     public static int NUMBER_OF_TILES_Y;
     public static int NUMBER_OF_MAPS;
-    // Speed Of The Application
-    public static int GAME_SPEED;
+    public static int GAME_SPEED; // Refresh Map Time
     public static int START_ENERGY;
     public static int NUMBER_OF_ANIMALS;
     public static int MOVE_ENERGY;
     public static int PLANT_ENERGY;
     public static double JUNGLE_RATIO;
 
-    public static int FIRST_RANK;
-    public static int SECOND_RANK;
-    public static int THIRD_RANK;
-    public static int FOURTH_RANK;
+    // Rank -> Color Of Snake
+    public static int FIRST_RANK; // White Snake
+    public static int SECOND_RANK; // Blue Snake
+    public static int THIRD_RANK; // Red Snake
+    public static int FOURTH_RANK; // Gold Snake
 
-    // URLS
     static final String snakesOnGrassPath = "src/Graphics/snakesOnGrass/";
     static final String snakesOnJunglePath = "src/Graphics/snakesOnJungle/";
     static final String grassesPath = "src/Graphics/grasses/";

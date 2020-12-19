@@ -15,10 +15,6 @@ public class Vector2d {
         return new Vector2d(this.x + other.x, this.y + other.y);
     }
 
-    public Vector2d subtract(Vector2d other){
-        return new Vector2d(this.x - other.x, this.y - other.y);
-    }
-
     @Override
     public boolean equals(Object other){
         if (this == other)
@@ -37,9 +33,4 @@ public class Vector2d {
         hash += this.y * 17;
         return hash;
     }
-
-    public Vector2d opposite(){
-        return new Vector2d(-this.x, -this.y);
-    }
-
 }

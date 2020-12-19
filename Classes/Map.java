@@ -1,7 +1,6 @@
 package Classes;
 
 import Interfaces.IWorldMap;
-import Visualizer.MapVisualizer;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -277,13 +276,6 @@ public class Map implements IWorldMap {
         x = x % (this.width);
         y = y % (this.height);
         return new Vector2d(x, y);
-    }
-
-
-    @Override
-    public String toString() {
-        MapVisualizer visual = new MapVisualizer(this);
-        return visual.draw(new Vector2d(0, 0), new Vector2d(this.width, this.height));
     }
 
     @Override
