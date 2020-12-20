@@ -5,10 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 public class Constants {
-    private Constants(){
-
-    }
-
     public static final String TITLE = "Evolution Simulator";
     public static final int BOARD_WIDTH = 700;
     public static final int BOARD_HEIGHT = 700;

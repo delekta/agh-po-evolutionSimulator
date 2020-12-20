@@ -11,49 +11,47 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class StatisticsPanel extends JPanel {
-    GameMainFrame gameMainFrame;
-    GamePanel gamePanel;
+    private GamePanel gamePanel;
     private Map map;
-    Timer timer;
+    private Timer timer;
     private int yOverflow;
     boolean isStarted;
     boolean isStopped;
-    JButton startBtn;
-    JButton stopBtn;
-    JButton nextDayBtn;
-    JButton saveStats;
-    JButton markDominantGenotype;
-    JButton trackAnimal;
-    StopActionListener stopActionListener;
-    StartActionListener startActionListener;
-    NextDayActionListener nextDayActionListener;
-    SaveStatsActionListener saveStatsActionListener;
-    MarkDominantGenotypeActionListener markDominantGenotypeActionListener;
-    TrackAnimalActionListener trackAnimalActionListener;
-    JLabel mapStatisticsTitle;
-    JLabel dayInfo;
-    JLabel numberOfAnimalsInfo;
-    JLabel numberOfGrassesInfo;
-    JLabel dominantGenotypesInfo;
-    JLabel averageEnergyInfo;
-    JLabel averageAgeOfDeathsInfo;
-    JLabel averageNumberOfChildrenInfo;
-    JLabel trackedAnimalStatisticsTitle;
-    JLabel numberOfChildren;
-    JLabel numberOfOffspring;
-    JLabel deathDate;
+    private JButton startBtn;
+    private JButton stopBtn;
+    private JButton nextDayBtn;
+    private JButton saveStats;
+    private JButton markDominantGenotype;
+    private JButton trackAnimal;
+    private StopActionListener stopActionListener;
+    private StartActionListener startActionListener;
+    private NextDayActionListener nextDayActionListener;
+    private SaveStatsActionListener saveStatsActionListener;
+    private MarkDominantGenotypeActionListener markDominantGenotypeActionListener;
+    private TrackAnimalActionListener trackAnimalActionListener;
+    private JLabel mapStatisticsTitle;
+    private JLabel dayInfo;
+    private JLabel numberOfAnimalsInfo;
+    private JLabel numberOfGrassesInfo;
+    private JLabel dominantGenotypesInfo;
+    private JLabel averageEnergyInfo;
+    private JLabel averageAgeOfDeathsInfo;
+    private JLabel averageNumberOfChildrenInfo;
+    private JLabel trackedAnimalStatisticsTitle;
+    private JLabel numberOfChildren;
+    private JLabel numberOfOffspring;
+    private JLabel deathDate;
 
-    public StatisticsPanel(int yOverflow, Timer timer, GamePanel gamePanel, Map map, GameMainFrame gameMainFrame){
-        initializeVariables(yOverflow, timer, gamePanel, map, gameMainFrame);
+    public StatisticsPanel(int yOverflow, Timer timer, GamePanel gamePanel, Map map){
+        initializeVariables(yOverflow, timer, gamePanel, map);
         initializeLayout();
     }
 
-    private void initializeVariables(int yOverflow, Timer timer, GamePanel gamePanel, Map map, GameMainFrame gameMainFrame){
+    private void initializeVariables(int yOverflow, Timer timer, GamePanel gamePanel, Map map){
         this.yOverflow = yOverflow;
         this.timer = timer;
         this.isStarted = false;
         this.isStopped = true;
-        this.gameMainFrame = gameMainFrame;
         this.gamePanel = gamePanel;
         this.map = map;
 

@@ -32,7 +32,7 @@ public class  GameMainFrame extends JFrame implements ActionListener {
         map.placeNAnimalsOnMap(Constants.NUMBER_OF_ANIMALS);
         this.timer = new Timer(Constants.GAME_SPEED, this);
         this.gamePanel = new GamePanel(this.sizeOfTile, this.xOverflow, this.yOverflow, map, this, timer);
-        this.statisticsPanel = new StatisticsPanel(this.yOverflow, this.timer, this.gamePanel, map, this);
+        this.statisticsPanel = new StatisticsPanel(this.yOverflow, this.timer, this.gamePanel, map);
     }
 
     private void initializeLayout() throws IOException {

@@ -1,5 +1,4 @@
 package Interfaces;
-
 import Objects.Vector2d;
 
 public interface IMapElement {

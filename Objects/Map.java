@@ -13,8 +13,8 @@ public class Map implements IWorldMap {
     private int jungleHeight;
     private int jungleWidth;
     private final double jungleRatio; //jungleRatio - length of appropriate jungle edge to length of appropriate map edge
-    private HashMap<Vector2d, ArrayList<Animal>> animalHashMap = new HashMap<Vector2d, ArrayList<Animal>>();
-    private HashMap<Vector2d, Grass> grassHashMap = new HashMap<>();
+    private final HashMap<Vector2d, ArrayList<Animal>> animalHashMap = new HashMap<Vector2d, ArrayList<Animal>>();
+    private final HashMap<Vector2d, Grass> grassHashMap = new HashMap<>();
     private double numberOfAnimals;
     private double numberOfGrasses;
     private double sumOfAnimalsEnergy;

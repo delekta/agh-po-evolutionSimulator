@@ -1,5 +1,4 @@
 package Interfaces;
-
 import Objects.Animal;
 import Objects.Vector2d;
 
