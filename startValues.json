@@ -2,7 +2,7 @@
   "numberOfTilesX": 10,
   "numberOfTilesY": 10,
   "numberOfMaps": 1,
-  "startEnergy": 20,
+  "startEnergy": 100,
   "numberOfAnimals": 4,
   "moveEnergy": 1,
   "plantEnergy": 10,

@@ -76,7 +76,7 @@ public class StatisticsPanel extends JPanel {
         mapStatisticsTitle.setHorizontalAlignment(SwingConstants.CENTER);
         dayInfo = new JLabel("  Day: " + map.getDay());
         numberOfAnimalsInfo = new JLabel("  Number of animals: " + map.getNumberOfAnimals());
-        numberOfGrassesInfo = new JLabel("  Number of grasses: " + map.getNumberOfGrasses());
+        numberOfGrassesInfo = new JLabel("  Number of eggs: " + map.getNumberOfGrasses());
         dominantGenotypesInfo = new JLabel("  Dominant genotype: " + map.getDominantGenotype());
         averageEnergyInfo = new JLabel("  Average animal energy: " + map.getAverageEnergy());
         averageAgeOfDeathsInfo = new JLabel("  Average age of deaths: " + map.getAverageAgeOfDeaths());
@@ -306,7 +306,7 @@ public class StatisticsPanel extends JPanel {
     public void updateMapStats(){
         dayInfo.setText("  Day: " + map.getDay());
         numberOfAnimalsInfo.setText("  Number of animals: " + map.getNumberOfAnimals());
-        numberOfGrassesInfo.setText("  Number of grasses: " + map.getNumberOfGrasses());
+        numberOfGrassesInfo.setText("  Number of eggs: " + map.getNumberOfGrasses());
         dominantGenotypesInfo.setText("  Dominant genotype: " + map.getDominantGenotype());
         averageEnergyInfo.setText("  Average animal energy: " + map.getAverageEnergy());
         averageAgeOfDeathsInfo.setText("  Average age of deaths: " + map.getAverageAgeOfDeaths());
