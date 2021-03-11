@@ -1,7 +1,7 @@
 Evolution Simulator
 ---
 
-Technology used:
+Technologies used:
 - Java 
 - Swing
 - Object Oriented Programming (yes, i know it's not technology)
