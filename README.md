@@ -61,8 +61,11 @@ User interface contains six buttons:
 
 ![Tracked Animal](readmeFiles/trackedAnimal.png)
 
-### Saved Data Format
+### Saving Data
 
-![Saved Data](readmeFiles/savingData.png)
+![Saving Data](readmeFiles/savingData.png)
+
+### Saved Data
+![Saved Data](readmeFiles/statsJSONfile.png)
 
 
