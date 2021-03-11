@@ -35,7 +35,7 @@ public class  GameMainFrame extends JFrame implements ActionListener {
         this.statisticsPanel = new StatisticsPanel(this.yOverflow, this.timer, this.gamePanel, map);
     }
 
-    private void initializeLayout() throws IOException {
+    private void initializeLayout(){
         this.add(statisticsPanel, BorderLayout.LINE_START);
         this.add(gamePanel, BorderLayout.LINE_END);
         setTitle(Constants.TITLE);
